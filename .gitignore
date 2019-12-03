@@ -117,3 +117,5 @@ htmlcov/
 
 # notebooks
 notebooks/
+/.project
+/.pydevproject

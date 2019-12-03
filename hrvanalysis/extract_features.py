@@ -6,13 +6,16 @@
 from typing import List, Tuple
 from collections import namedtuple
 import numpy as np
+import pandas as pd
 import nolds
 from scipy import interpolate
 from scipy import signal
+from scipy.stats import iqr
 from astropy.stats import LombScargle
+from pandas.core.frame import DataFrame
 
 # limit functions that user might import using "from hrv-analysis import *"
-__all__ = ['get_time_domain_features', 'get_frequency_domain_features',
+__all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
            'get_geometrical_features', 'get_poincare_plot_features',
            "get_csi_cvi_features", "get_sampen"]
 
@@ -145,6 +148,152 @@ def get_time_domain_features(nn_intervals: List[float]) -> dict:
 
     return time_domain_features
 
+def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
+    """
+    Returns a dictionary containing time domain features for HRV analysis.
+    Mostly used on long term recordings (24h) but some studies use some of those features on
+    short term recordings, from 1 to 5 minutes window.
+
+    Parameters
+    ----------
+    nn_intervals : list
+        list of Normal to Normal Interval
+
+    Returns
+    -------
+    jamzone_time_domain_features : dict
+        dictionary containing time domain features for HRV analyses. There are details
+        about each features below.
+
+    Notes
+    -----
+    Here are some details about feature engineering...
+
+    - **mean_nni**: The mean of RR-intervals.
+
+    - **sdnn** : The standard deviation of the time interval between successive normal heart beats \
+    (i.e. the RR-intervals).
+
+    - **sdsd**: The standard deviation of differences between adjacent RR-intervals
+
+    - **rmssd**: The square root of the mean of the sum of the squares of differences between \
+    adjacent NN-intervals. Reflects high frequency (fast or parasympathetic) influences on hrV \
+    (*i.e.*, those influencing larger changes from one beat to the next).
+
+    - **max_rmssd, min_rmssd**: the 75% and 25% quartiles in a RMSSD signal calculated using a sliding \
+    window of size 60
+    
+    - **range_rmssd**: Interquartile range between the 75% and 25% quartiles in a RMSSD signal \
+    calculated using a sliding window of size 60
+    
+    - **max_speed_stress_rmssd**: Maximal speed of RMSSD change per second down towards stress
+    
+    - **max_speed_relax_rmssd**: Maximal speed of RMSSD change per second up towards relaxation
+    
+    - **median_nni**: Median Absolute values of the successive differences between the RR-intervals.
+
+    - **nni_50**: Number of interval differences of successive RR-intervals greater than 50 ms.
+
+    - **pnni_50**: The proportion derived by dividing nni_50 (The number of interval differences \
+    of successive RR-intervals greater than 50 ms) by the total number of RR-intervals.
+
+    - **nni_20**: Number of interval differences of successive RR-intervals greater than 20 ms.
+
+    - **pnni_20**: The proportion derived by dividing nni_20 (The number of interval differences \
+    of successive RR-intervals greater than 20 ms) by the total number of RR-intervals.
+
+    - **range_nni**: difference between the maximum and minimum nn_interval.
+
+    - **cvsd**: Coefficient of variation of successive differences equal to the rmssd divided by \
+    mean_nni.
+
+    - **cvnni**: Coefficient of variation equal to the ratio of sdnn divided by mean_nni.
+
+    - **mean_hr**: The mean Heart Rate.
+
+    - **max_hr**: Max heart rate.
+
+    - **min_hr**: Min heart rate.
+
+    - **std_hr**: Standard deviation of heart rate.
+
+    References
+    ----------
+    .. [1] Heart rate variability - Standards of measurement, physiological interpretation, and \
+    clinical use, Task Force of The European Society of Cardiology and The North American Society \
+    of Pacing and Electrophysiology, 1996
+    """
+
+    diff_nni = np.diff(nn_intervals)
+    length_int = len(nn_intervals)
+
+    # Basic statistics
+    mean_nni = np.mean(nn_intervals)
+    median_nni = np.median(nn_intervals)
+    range_nni = max(nn_intervals) - min(nn_intervals)
+
+    sdsd = np.std(diff_nni)
+    rmssd = np.sqrt(np.mean(diff_nni ** 2))
+    
+    rmssd_sliding_window = DataFrame(diff_nni)
+    rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    
+    max_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[59:], [75 ,25])
+    range_rmssd = max_rmssd - min_rmssd
+    
+    rmssd_speed = (rmssd_sliding_window.diff() / DataFrame(nn_intervals[1:])) * 1000
+    max_speed_relax_rmssd, max_speed_stress_rmssd = np.percentile(rmssd_speed[60:], [75 ,25])
+    max_speed_stress_rmssd = np.abs(max_speed_stress_rmssd)
+    max_speed_relax_rmssd = np.abs(max_speed_relax_rmssd)
+
+    nni_50 = sum(np.abs(diff_nni) > 50)
+    pnni_50 = 100 * nni_50 / length_int
+    nni_20 = sum(np.abs(diff_nni) > 20)
+    pnni_20 = 100 * nni_20 / length_int
+
+    # Feature found on github and not in documentation
+    cvsd = rmssd / mean_nni
+
+    # Features only for long term recordings
+    sdnn = np.std(nn_intervals, ddof=1)  # ddof = 1 : unbiased estimator => divide std by n-1
+    cvnni = sdnn / mean_nni
+
+    # Heart Rate equivalent features
+    heart_rate_list = np.divide(60000, nn_intervals)
+    mean_hr = np.mean(heart_rate_list)
+    min_hr = min(heart_rate_list)
+    max_hr = max(heart_rate_list)
+    std_hr = np.std(heart_rate_list)
+
+    jamzone_time_domain_features = {
+        """
+        'mean_nni': mean_nni,
+        'sdnn': sdnn,
+        'sdsd': sdsd,
+        'nni_50': nni_50,
+        'pnni_50': pnni_50,
+        'nni_20': nni_20,
+        'pnni_20': pnni_20,
+        """
+        'rmssd': rmssd,
+        'min_rmssd': min_rmssd,
+        'max_rmssd': max_rmssd,
+        'range_rmssd': range_rmssd,
+        'max_speed_stress_rmssd': max_speed_stress_rmssd,
+        'max_speed_relax_rmssd': max_speed_relax_rmssd,
+        """
+        'median_nni': median_nni,
+        'range_nni': range_nni,
+        'cvsd': cvsd,
+        'cvnni': cvnni,
+        """
+        'mean_hr': mean_hr,
+        'max_hr': max_hr,
+        'min_hr': min_hr,
+        'std_hr': std_hr,
+    }
+
+    return jamzone_time_domain_features
 
 def get_geometrical_features(nn_intervals: List[float]) -> dict:
     """
