@@ -266,27 +266,13 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
     std_hr = np.std(heart_rate_list)
 
     jamzone_time_domain_features = {
-        """
-        'mean_nni': mean_nni,
-        'sdnn': sdnn,
-        'sdsd': sdsd,
-        'nni_50': nni_50,
-        'pnni_50': pnni_50,
-        'nni_20': nni_20,
-        'pnni_20': pnni_20,
-        """
+
         'rmssd': rmssd,
         'min_rmssd': min_rmssd,
         'max_rmssd': max_rmssd,
         'range_rmssd': range_rmssd,
         'max_speed_stress_rmssd': max_speed_stress_rmssd,
         'max_speed_relax_rmssd': max_speed_relax_rmssd,
-        """
-        'median_nni': median_nni,
-        'range_nni': range_nni,
-        'cvsd': cvsd,
-        'cvnni': cvnni,
-        """
         'mean_hr': mean_hr,
         'max_hr': max_hr,
         'min_hr': min_hr,
