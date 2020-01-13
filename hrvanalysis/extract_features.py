@@ -270,7 +270,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
     jamzone_time_domain_features = {
 
         'rmssd': rmssd,
-        'rmssd_array': rmssd_sliding_window,
+        'rmssdArray': rmssd_sliding_window,
         'rmssdMin': min_rmssd,
         'rmssdMax': max_rmssd,
         'rmssdRange': range_rmssd,
