@@ -14,6 +14,7 @@ from scipy.stats import iqr
 from astropy.stats import LombScargle
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
+import json
 
 # limit functions that user might import using "from hrv-analysis import *"
 __all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
@@ -285,7 +286,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
         'hrStd': std_hr,
     }
 
-    return jamzone_time_domain_features
+    return json.dumps(jamzone_time_domain_features, ensure_ascii=False)
 
 def get_geometrical_features(nn_intervals: List[float]) -> dict:
     """
