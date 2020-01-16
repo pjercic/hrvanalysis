@@ -9,8 +9,8 @@ Explanation of the mobile app values returning from the library
 - HRV range: 'rmssdRange', * (rmssdRange / 200) * 100
 - Calm percentage: 'rmssdRangeRatioCalm', * rmssdRangeRatioCalm * 100
 - Focus percentage: 'rmssdRangeRatioFocus', * rmssdRangeRatioFocus * 100
-- Focus speed: 'rmssdMaxSpeedStress', * RMSSD / per second
-- Calm speed: 'rmssdMaxSpeedRelax', * RMSSD / per second
+- Focus speed: 'rmssdMaxSpeedStress', * this value is RMSSD per second [Rps], like kilometers per hour [kmh]
+- Calm speed: 'rmssdMaxSpeedRelax', * this value is RMSSD per second [Rps], like kilometers per hour [kmh]
 - HR avg: 'hrMean': mean_hr,
 - HR max: 'hrMax': max_hr,
 - HR min: 'hrMin': min_hr,
