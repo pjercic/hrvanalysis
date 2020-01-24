@@ -246,9 +246,8 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
     calm_range_ratio_rmssd = 1 - focus_range_ratio_rmssd
     
     rmssd_speed = (rmssd_sliding_window.diff() / Series(nn_intervals[1:])) * 1000
-    max_speed_relax_rmssd, max_speed_stress_rmssd = np.percentile(rmssd_speed[60:], [75 ,25])
-    max_speed_stress_rmssd = np.abs(max_speed_stress_rmssd)
-    max_speed_relax_rmssd = np.abs(max_speed_relax_rmssd)
+    max_speed_stress_rmssd = np.abs(rmssd_speed.min())
+    max_speed_relax_rmssd = np.abs(rmssd_speed.max())
 
     nni_50 = sum(np.abs(diff_nni) > 50)
     pnni_50 = 100 * nni_50 / length_int
