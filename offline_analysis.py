@@ -5,6 +5,8 @@ Created on Dec 5, 2019
 '''
 
 import os
+import random
+import numpy as np
 from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features
     
@@ -39,10 +41,15 @@ def transform_to_rmssd_statistics(rr_list: List[float]) -> dict:
   
     return time_domain_features
   
-def test_transform_to_rmssd_statistics():
+def test_transform_to_rmssd_statistics(noElements):
     
     # rr_intervals_list contains integer values of RR-interval
-    rr_test_intervals = load_test_data(TEST_DATA_FILENAME_LARGE)
+    if noElements <= 1000:
+        rr_test_intervals = load_test_data(TEST_DATA_FILENAME_LARGE)
+    else:
+        rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
+        rr_test_intervals = rr_test_intervals.astype(int)
+    
     
     # standardized test values
     #nn_intervals_10 = load_test_data(TEST_DATA_FILENAME_10)
@@ -65,3 +72,4 @@ def test_transform_to_rmssd_statistics():
     
     #time_domain_features = transform_to_rmssd_statistics(nn_intervals_60)
     #print('60: [' + time_domain_features + ']')
+    
