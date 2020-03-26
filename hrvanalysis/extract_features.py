@@ -240,9 +240,9 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
     rmssd_sliding_window = Series(diff_nni)
     rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     
-    max_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[59:], [75 ,25])
+    max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[59:], [75, 50 ,25])
     range_rmssd = max_rmssd - min_rmssd
-    focus_range_ratio_rmssd = (rmssd - min_rmssd) / range_rmssd
+    focus_range_ratio_rmssd = (avg_rmssd - min_rmssd) / range_rmssd
     calm_range_ratio_rmssd = 1 - focus_range_ratio_rmssd
     
     rmssd_speed = (rmssd_sliding_window.diff() / Series(nn_intervals[1:])) * 1000
@@ -272,6 +272,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
 
         'rmssd': rmssd,
         'rmssdArray': rmssd_sliding_window.fillna(0).to_list(),
+        'rmssdAvg': avg_rmssd,
         'rmssdMin': min_rmssd,
         'rmssdMax': max_rmssd,
         'rmssdRange': range_rmssd,

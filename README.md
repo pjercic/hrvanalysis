@@ -2,8 +2,9 @@
 
 Explanation of the mobile app values returning from the library
 
-- HRV avg: 'rmssd',
-- HRV grpah: 'rmssdArray', * It would be best to have numbers start form beginning, not jump from 0 to a value
+- HRV avg: 'rmssd', **RMSSD for a given period (use only when medicaly grade sensor, since prone to outliers)**
+- HRV graph: 'rmssdArray',
+- HRV avg: 'rmssdAvg', **Median RMSSD for a given period, corrected acording to min, max and range values**
 - HRV min: 'rmssdMin',
 - HRV max: 'rmssdMax',
 - HRV range: 'rmssdRange', * (rmssdRange / 200) * 100
@@ -15,5 +16,3 @@ Explanation of the mobile app values returning from the library
 - HR max: 'hrMax': max_hr,
 - HR min: 'hrMin': min_hr,
 - HR standard deviation: 'hrStd': std_hr,
-
-_The improvement would be to make the graphing start from the beginning, not jump from 0 to a value, and to do the calculation in the backend_
