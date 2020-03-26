@@ -46,7 +46,7 @@ def test_transform_to_rmssd_statistics(noElements):
     # rr_intervals_list contains integer values of RR-interval
     if noElements <= 1000:
         rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_LARGE))
-		rr_test_intervals = rr_test_intervals[:noElements]
+        rr_test_intervals = rr_test_intervals[:noElements]
     else:
         rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
         rr_test_intervals = rr_test_intervals.astype(int)
