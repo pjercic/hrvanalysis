@@ -16,3 +16,5 @@ Explanation of the mobile app values returning from the library
 - HR max: 'hrMax': max_hr,
 - HR min: 'hrMin': min_hr,
 - HR standard deviation: 'hrStd': std_hr,
+
+_Code for testing on the server > python3 -c 'from offline_analysis import *; test_transform_to_rmssd_statistics(1000)'
