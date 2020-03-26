@@ -2,9 +2,9 @@
 
 Explanation of the mobile app values returning from the library
 
-- HRV avg: 'rmssd', **RMSSD for a given period (use only when medicaly grade sensor, since prone to outliers)**
+- HRV avg: 'rmssd', **RMSSD for a given period (use only when medically grade sensor, since prone to outliers)**
 - HRV graph: 'rmssdArray',
-- HRV avg: 'rmssdAvg', **Median RMSSD for a given period, corrected acording to min, max and range values**
+- HRV avg: 'rmssdAvg', **Median RMSSD for a given period, corrected according to min, max and range values**
 - HRV min: 'rmssdMin',
 - HRV max: 'rmssdMax',
 - HRV range: 'rmssdRange', * (rmssdRange / 200) * 100
