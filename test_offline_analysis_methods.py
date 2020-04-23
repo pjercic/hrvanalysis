@@ -7,12 +7,12 @@ from offline_analysis import transform_to_rmssd_statistics
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
 
-TEST_DATA_FILENAME_10 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_10.txt')
-TEST_DATA_FILENAME_20 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_20.txt')
-TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_60.txt')
-TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './test_nn_intervals_large.txt')
-TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './bug20200408_test_nn_intervals.txt')
-TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './bug20200408_test_timestamps.txt')
+TEST_DATA_FILENAME_10 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_10.txt')
+TEST_DATA_FILENAME_20 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_20.txt')
+TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_60.txt')
+TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_large.txt')
+TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200408_test_nn_intervals.txt')
+TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200408_test_timestamps.txt')
 
 def load_test_data(path):
     # Load test rr_intervals data
