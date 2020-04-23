@@ -150,7 +150,7 @@ def get_time_domain_features(nn_intervals: List[float]) -> dict:
 
     return time_domain_features
 
-def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
+def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: List[str]) -> dict:
     """
     Returns a dictionary containing time domain features for HRV analysis.
     Mostly used on long term recordings (24h) but some studies use some of those features on
@@ -238,7 +238,13 @@ def get_jamzone_time_domain_features(nn_intervals: List[float]) -> dict:
     rmssd = np.sqrt(np.mean(diff_nni ** 2))
     
     rmssd_sliding_window = Series(diff_nni)
-    rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    nn_timestamps = pd.to_datetime(timestamp_list[1:])
+    time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta('60s')]
+    starting_value = time.size
+    rmssd_sliding_window.index = nn_timestamps
+    #rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    # window period denominrations are t, T, min, s
+    rmssd_sliding_window = rmssd_sliding_window.rolling('5min', min_periods=starting_value, closed='left').apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     
     max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[59:], [75, 50 ,25])
     range_rmssd = max_rmssd - min_rmssd

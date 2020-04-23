@@ -2,14 +2,17 @@ import os
 import random
 import json
 import numpy as np
+import pandas as pd
 from offline_analysis import transform_to_rmssd_statistics
 from hrvanalysis.plot import plot_timeseries
+from numpy import int
 
 TEST_DATA_FILENAME_10 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_10.txt')
 TEST_DATA_FILENAME_20 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_20.txt')
 TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './test_nn_intervals_60.txt')
 TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './test_nn_intervals_large.txt')
 TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './bug20200408_test_nn_intervals.txt')
+TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './bug20200408_test_timestamps.txt')
 
 def load_test_data(path):
     # Load test rr_intervals data
@@ -18,17 +21,27 @@ def load_test_data(path):
     nn_intervals = list(map(lambda x: int(x.strip()), lines))
     return nn_intervals
 
+def load_test_timestamps(path):
+    # Load test rr_intervals data
+    with open(path, "r") as text_file:
+        lines = text_file.readlines()
+    nn_timestamps = list(lines)
+    return nn_timestamps
+
 def test_transform_to_rmssd_statistics(noElements):
     
     # rr_intervals_list contains integer values of RR-interval
     if noElements <= 1000:
-        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_LARGE))
+        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
         rr_test_intervals = rr_test_intervals[:noElements]
+        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
+        rr_test_timestamps = rr_test_timestamps[:noElements]
     else:
         rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
         rr_test_intervals = rr_test_intervals.astype(int)
+        rr_test_timestamps = pd.date_range('2014-01-01', '2014-04-01', freq = '600ms')
     
-    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals)
+    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
     
@@ -36,8 +49,11 @@ def test_bugs():
     
     # rr_intervals_list contains integer values of RR-interval for the bug
     rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
+    
+    # rr_intervals_list contains integer values of RR-interval for the bug
+    rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
         
-    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals)
+    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
     
@@ -46,3 +62,5 @@ def test_bugs():
     
     jdata = json.loads(time_domain_features)
     plot_timeseries(jdata['rmssdArray']);
+    
+test_transform_to_rmssd_statistics(150)
