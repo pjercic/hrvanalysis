@@ -15,6 +15,7 @@ from astropy.stats import LombScargle
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 import json
+from _operator import index
 
 # limit functions that user might import using "from hrv-analysis import *"
 __all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
@@ -246,12 +247,12 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     # window period denominrations are t, T, min, s
     rmssd_sliding_window = rmssd_sliding_window.rolling('5min', min_periods=starting_value, closed='left').apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     
-    max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[59:], [75, 50 ,25])
+    max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[starting_value:], [75, 50 ,25])
     range_rmssd = max_rmssd - min_rmssd
     focus_range_ratio_rmssd = (avg_rmssd - min_rmssd) / range_rmssd
     calm_range_ratio_rmssd = 1 - focus_range_ratio_rmssd
     
-    rmssd_speed = (rmssd_sliding_window.diff() / Series(nn_intervals[1:])) * 1000
+    rmssd_speed = (rmssd_sliding_window.diff() / Series(nn_intervals[1:], index=nn_timestamps)) * 1000
     max_speed_stress_rmssd = np.abs(rmssd_speed.min())
     max_speed_relax_rmssd = np.abs(rmssd_speed.max())
 

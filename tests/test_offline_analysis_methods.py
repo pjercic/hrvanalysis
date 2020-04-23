@@ -39,7 +39,8 @@ def test_transform_to_rmssd_statistics(noElements):
     else:
         rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
         rr_test_intervals = rr_test_intervals.astype(int)
-        rr_test_timestamps = pd.date_range('2014-01-01', '2014-04-01', freq = '600ms')
+        rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
+        rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
     
     time_domain_features = transform_to_rmssd_statistics(rr_test_intervals, rr_test_timestamps)
     
@@ -62,5 +63,3 @@ def test_bugs():
     
     jdata = json.loads(time_domain_features)
     plot_timeseries(jdata['rmssdArray']);
-    
-test_transform_to_rmssd_statistics(150)
