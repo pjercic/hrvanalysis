@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 from offline_analysis import transform_to_snapshot_statistics
+from offline_analysis import transform_to_3dayme_statistics
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
 
@@ -28,7 +29,7 @@ def load_test_timestamps(path):
     nn_timestamps = list(lines)
     return nn_timestamps
 
-def test_transform_to_rmssd_statistics(noElements):
+def test_transform_to_snapshot_statistics(noElements):
     
     # rr_intervals_list contains integer values of RR-interval
     if noElements <= 1000:
@@ -46,6 +47,17 @@ def test_transform_to_rmssd_statistics(noElements):
     
     print(time_domain_features)
     
+def test_transform_to_3dayme_statistics():
+    
+    rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(500000)])
+    rr_test_intervals = rr_test_intervals.astype(int)
+    rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=500000, freq = '600ms')
+    rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
+
+    time_domain_features = transform_to_3dayme_statistics(rr_test_intervals, rr_test_timestamps)
+    
+    print(time_domain_features)
+
 def test_bugs():
     
     # rr_intervals_list contains integer values of RR-interval for the bug

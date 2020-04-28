@@ -6,6 +6,7 @@ Created on Dec 5, 2019
 
 from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features
+import pandas as pd
 
 def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
@@ -15,11 +16,22 @@ def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[
 
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
+    starting_value = 0
+    ending_value = 0
+    nn_timestamps = pd.to_datetime(timestamp_list)
+    
     # Cut data on 3 days with 24h recording data
-
-    # Call the method three times and collect three return objects before sending them back
-    time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '5min')
+    for x in range(3):
   
+        time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta('1 day')]
+        starting_value = ending_value
+        ending_value = ending_value + time.size
+    
+        # Call the method three times and collect three return objects before sending them back
+        time_domain_features = transform_to_hrv_statistics(rr_list[starting_value:ending_value], timestamp_list[starting_value:ending_value], '5min')
+  
+        nn_timestamps = nn_timestamps[time.size:]
+        
     return time_domain_features
 
 def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str], window_duration: str) -> dict:
