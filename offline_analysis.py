@@ -15,13 +15,13 @@ def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[
 
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
-	# Cut data on 3 days with 24h recording data
-	
-	# Call the method three times and collect three return objects before sending them back
-	# time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '5min')
+    # Cut data on 3 days with 24h recording data
+
+    # Call the method three times and collect three return objects before sending them back
+    time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '5min')
   
     return time_domain_features
-	
+
 def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str], window_duration: str) -> dict:
     
     #Remove the outliers in the signal

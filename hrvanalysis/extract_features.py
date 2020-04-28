@@ -16,6 +16,7 @@ from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 import json
 from _operator import index
+from numpy import NaN
 
 # limit functions that user might import using "from hrv-analysis import *"
 __all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
@@ -240,12 +241,13 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     
     rmssd_sliding_window = Series(diff_nni)
     nn_timestamps = pd.to_datetime(timestamp_list[1:])
-    time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta('60s')]
+    time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta(window_duration)]
     starting_value = time.size
     rmssd_sliding_window.index = nn_timestamps
     #rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     # window period denominrations are t, T, min, s
-    rmssd_sliding_window = rmssd_sliding_window.rolling(window_duration, min_periods=starting_value, closed='left').apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    rmssd_sliding_window = rmssd_sliding_window.rolling(window_duration).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    rmssd_sliding_window[:starting_value] = NaN;
     
     max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[starting_value:], [75, 50 ,25])
     range_rmssd = max_rmssd - min_rmssd
@@ -278,6 +280,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     jamzone_time_domain_features = {
 
         'rmssd': rmssd,
+        'sdnn': sdnn,
         'rmssdArray': rmssd_sliding_window.fillna(0).to_list(),
         'rmssdAvg': avg_rmssd,
         'rmssdMin': min_rmssd,

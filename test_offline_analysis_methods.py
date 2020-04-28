@@ -3,7 +3,7 @@ import random
 import json
 import numpy as np
 import pandas as pd
-from offline_analysis import transform_to_rmssd_statistics
+from offline_analysis import transform_to_snapshot_statistics
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
 
