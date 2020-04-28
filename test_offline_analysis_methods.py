@@ -42,7 +42,7 @@ def test_transform_to_rmssd_statistics(noElements):
         rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
         rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
     
-    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals, rr_test_timestamps)
+    time_domain_features = transform_to_snapshot_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
     
@@ -54,7 +54,7 @@ def test_bugs():
     # rr_intervals_list contains integer values of RR-interval for the bug
     rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
         
-    time_domain_features = transform_to_rmssd_statistics(rr_test_intervals, rr_test_timestamps)
+    time_domain_features = transform_to_snapshot_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
     
