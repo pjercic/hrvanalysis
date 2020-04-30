@@ -1,9 +1,9 @@
 # Heart Rate Variability analysis
 
-When the new data [Datetime, RRs] from the DB has been received, call the method **transform_to_rmssd_statistics** from **offline_analysis**.
+When the new data [Datetime, RRs] from the DB has been received, call the method **transform_to_snapshot_statistics** from **offline_analysis**.
 
 ```python3
-transform_to_rmssd_statistics(rr_intervals, rr_timestamps)
+transform_to_snapshot_statistics(rr_intervals, rr_timestamps)
 ```
 
 _Input:_ The method expects a list of RR values, and a list of associated datetime values
@@ -12,7 +12,8 @@ _Output:_ The JSON object with the following fields below
 
 Explanation of the mobile app values returning from the library
 
-- HRV avg: 'rmssd', **RMSSD for a given period (use only when medically grade sensor, since prone to outliers)**
+- HRV RMSSD avg: 'rmssd', **RMSSD for a given period (use only when medically grade sensor, since prone to outliers)**
+- HRV SDNN avg: 'sdnn', **SDNN is used for longer periods of known and similar length, which allows the comparison**
 - HRV graph: 'rmssdArray',
 - HRV avg: 'rmssdAvg', **Median RMSSD for a given period, corrected according to min, max and range values**
 - HRV min: 'rmssdMin',
@@ -27,4 +28,6 @@ Explanation of the mobile app values returning from the library
 - HR min: 'hrMin': min_hr,
 - HR standard deviation: 'hrStd': std_hr,
 
-_Code for testing on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_rmssd_statistics(2000)'_
+_Code for testing the snapshot functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_snapshot_statistics(2000)'_
+
+_Code for testing the 3dayme functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_3dayme_statistics()'_
