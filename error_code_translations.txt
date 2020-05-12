@@ -1,0 +1,7 @@
+Code,Message
+101,"There is no contact with the sensor!"
+102,"There is no RRs present in the sensor data package!"
+103,"The expected byte length does not match (smaller than) the expected basic package length!"
+104,"The expected byte length does not match (smaller than) the actual package with RR data length!"
+201,"The whole RR array is corrupted!"
+301,"Low quality data coming from the sensor!"
