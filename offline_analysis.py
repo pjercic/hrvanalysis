@@ -37,7 +37,19 @@ def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[st
     return time_domain_features
 
 def transform_to_morning_snapshots_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
-    print('Good morning')
+    
+    nn_timestamps = pd.to_datetime(timestamp_list)
+    
+    # snapshot for two minutes
+    if nn_timestamps[-1] - nn_timestamps[0] < pd.to_timedelta('2 minutes'):
+        return json.loads('{"errorCode":202}')
+    
+    # first 15 seconds of data are discarded as preparation time
+    trimmed_data = nn_timestamps[nn_timestamps > nn_timestamps[0] + pd.to_timedelta('15 seconds')]
+    
+    time_domain_features = transform_to_hrv_statistics(rr_list[rr_list.size - trimmed_data.size:], trimmed_data, '60s')
+    
+    return time_domain_features
     
 def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str], window_duration: str) -> dict:
     

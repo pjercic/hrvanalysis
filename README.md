@@ -6,6 +6,12 @@ When the new data [Datetime, RRs] from the DB has been received, call the method
 transform_to_snapshot_statistics(rr_intervals, rr_timestamps)
 ```
 
+When the morning snapshot data [Datetime, RRs] from the DB has been received, call the method **transform_to_morning_snapshots_statistics** from **offline_analysis**.
+
+```python3
+transform_to_morning_snapshots_statistics(rr_intervals, rr_timestamps)
+```
+
 _Input:_ The method expects a list of RR values, and a list of associated datetime values
 
 _Output:_ The JSON object with the following fields below
@@ -30,5 +36,7 @@ Explanation of the mobile app values returning from the library
 - Error code: 'errorCode': error_code
 
 _Code for testing the snapshot functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_snapshot_statistics(2000)'_
+
+_Code for testing the morning snapshot functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_morning_snapshots_statistics()'_
 
 _Code for testing the 3dayme functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_3dayme_statistics()'_

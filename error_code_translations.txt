@@ -4,4 +4,5 @@ Code,Message
 103,"The expected byte length does not match (smaller than) the expected basic package length!"
 104,"The expected byte length does not match (smaller than) the actual package with RR data length!"
 201,"The whole RR array is corrupted!"
+202,"Morning snapshot shorter than 2 minutes"
 301,"Low quality data coming from the sensor!"
