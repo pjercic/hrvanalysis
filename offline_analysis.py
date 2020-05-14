@@ -8,7 +8,6 @@ from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features
 import json
 import pandas as pd
-from _ast import If
 
 def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
@@ -42,7 +41,7 @@ def transform_to_morning_snapshots_statistics(rr_list: List[float], timestamp_li
     
     # snapshot for two minutes
     if nn_timestamps[-1] - nn_timestamps[0] < pd.to_timedelta('2 minutes'):
-        return json.loads('{"errorCode":202}')
+        return json.dumps(json.loads('{"errorCode":202}'), ensure_ascii=False)
     
     # first 15 seconds of data are discarded as preparation time
     trimmed_data = nn_timestamps[nn_timestamps > nn_timestamps[0] + pd.to_timedelta('15 seconds')]
@@ -85,4 +84,4 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     time_domain_features = json.loads(time_domain_features)
     time_domain_features['errorCode'] = error_code
     
-    return time_domain_features
+    return json.dumps(time_domain_features, ensure_ascii=False)
