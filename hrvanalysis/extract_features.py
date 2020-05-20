@@ -244,8 +244,6 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta(window_duration)]
     starting_value = time.size
     rmssd_sliding_window.index = nn_timestamps
-    #rmssd_sliding_window = rmssd_sliding_window.rolling(60).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
-    # window period denominrations are t, T, min, s
     rmssd_sliding_window = rmssd_sliding_window.rolling(window_duration).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     rmssd_sliding_window[:starting_value] = NaN;
     
@@ -272,6 +270,8 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
 
     # Heart Rate equivalent features
     heart_rate_list = np.divide(60000, nn_intervals)
+    heart_rate_series = pd.Series(heart_rate_list[1:])
+    heart_rate_series.index = pd.to_datetime(timestamp_list[1:])
     mean_hr = np.mean(heart_rate_list)
     min_hr = min(heart_rate_list)
     max_hr = max(heart_rate_list)
@@ -290,6 +290,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'rmssdRangeRatioFocus': focus_range_ratio_rmssd,
         'rmssdMaxSpeedStress': max_speed_stress_rmssd,
         'rmssdMaxSpeedRelax': max_speed_relax_rmssd,
+        'hrArray': heart_rate_series.fillna(0).to_list(),
         'hrMean': mean_hr,
         'hrMax': max_hr,
         'hrMin': min_hr,

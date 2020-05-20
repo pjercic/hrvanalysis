@@ -29,6 +29,7 @@ Explanation of the mobile app values returning from the library
 - Focus percentage: 'rmssdRangeRatioFocus', * rmssdRangeRatioFocus * 100
 - Focus speed: 'rmssdMaxSpeedStress', * this value is RMSSD per second [Rps], like kilometers per hour [kmh]
 - Calm speed: 'rmssdMaxSpeedRelax', * this value is RMSSD per second [Rps], like kilometers per hour [kmh]
+- HR graph: 'hrArray'
 - HR avg: 'hrMean': mean_hr,
 - HR max: 'hrMax': max_hr,
 - HR min: 'hrMin': min_hr,
