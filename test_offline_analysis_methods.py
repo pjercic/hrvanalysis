@@ -85,5 +85,4 @@ def test_bugs():
     
     jdata = json.loads(time_domain_features)
     plot_timeseries(jdata['rmssdArray']);
-    
-test_bugs()
+
