@@ -11,8 +11,8 @@ TEST_DATA_FILENAME_10 = os.path.join(os.path.dirname(__file__), './tests/test_nn
 TEST_DATA_FILENAME_20 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_20.txt')
 TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_60.txt')
 TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_large.txt')
-TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200408_test_nn_intervals.txt')
-TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200408_test_timestamps.txt')
+TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_nn_intervals.txt')
+TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_timestamps.txt')
 
 def load_test_data(path):
     # Load test rr_intervals data
@@ -76,7 +76,7 @@ def test_bugs():
     # rr_intervals_list contains integer values of RR-interval for the bug
     rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
         
-    time_domain_features = transform_to_snapshot_statistics(rr_test_intervals, rr_test_timestamps)
+    time_domain_features = transform_to_morning_snapshots_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
     
@@ -85,3 +85,5 @@ def test_bugs():
     
     jdata = json.loads(time_domain_features)
     plot_timeseries(jdata['rmssdArray']);
+    
+test_bugs()
