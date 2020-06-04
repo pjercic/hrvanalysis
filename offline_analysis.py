@@ -46,7 +46,7 @@ def transform_to_morning_snapshots_statistics(rr_list: List[float], timestamp_li
     # first 15 seconds of data are discarded as preparation time
     trimmed_data = nn_timestamps[nn_timestamps > nn_timestamps[0] + pd.to_timedelta('15 seconds')]
     
-    time_domain_features = transform_to_hrv_statistics(rr_list[rr_list.size - trimmed_data.size:], trimmed_data, '60s')
+    time_domain_features = transform_to_hrv_statistics(rr_list[len(rr_list) - trimmed_data.size:], trimmed_data, '60s')
     
     return time_domain_features
     
