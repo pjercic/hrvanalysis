@@ -277,6 +277,10 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     max_hr = max(heart_rate_list)
     std_hr = np.std(heart_rate_list)
 
+    # timestamp index must be unique
+    if not rmssd_sliding_window.index.is_unique:
+        return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
+    
     jamzone_time_domain_features = {
 
         'rmssd': rmssd,
@@ -295,6 +299,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'hrMax': max_hr,
         'hrMin': min_hr,
         'hrStd': std_hr,
+        'errorCode': 0
     }
 
     return json.dumps(jamzone_time_domain_features, ensure_ascii=False)

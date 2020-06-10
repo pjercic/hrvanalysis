@@ -84,5 +84,5 @@ def test_bugs():
     plot_timeseries(rr_test_intervals);
     
     jdata = json.loads(time_domain_features)
-    plot_timeseries(jdata['rmssdArray']);
-
+    df = pd.read_json(jdata['rmssdArray'], typ='series')
+    plot_timeseries(df);

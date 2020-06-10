@@ -82,6 +82,7 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     time_domain_features = get_jamzone_time_domain_features(interpolated_nn_intervals, timestamp_list, window_duration)
     
     time_domain_features = json.loads(time_domain_features)
-    time_domain_features['errorCode'] = error_code
+    if error_code != 0:
+        time_domain_features['errorCode'] = error_code
     
     return json.dumps(time_domain_features, ensure_ascii=False)

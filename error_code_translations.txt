@@ -5,4 +5,5 @@ Code,Message
 104,"The expected byte length does not match (smaller than) the actual package with RR data length!"
 201,"The whole RR array is corrupted!"
 202,"Morning snapshot shorter than 2 minutes"
+203,"Timestamp index values are not unique"
 301,"Low quality data coming from the sensor!"
