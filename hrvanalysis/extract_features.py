@@ -285,7 +285,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
 
         'rmssd': rmssd,
         'sdnn': sdnn,
-        'rmssdArray': rmssd_sliding_window.fillna(0).to_json(date_format='iso'),
+        'rmssdArray': rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'),
         'rmssdAvg': avg_rmssd,
         'rmssdMin': min_rmssd,
         'rmssdMax': max_rmssd,
@@ -294,7 +294,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'rmssdRangeRatioFocus': focus_range_ratio_rmssd,
         'rmssdMaxSpeedStress': max_speed_stress_rmssd,
         'rmssdMaxSpeedRelax': max_speed_relax_rmssd,
-        'hrArray': heart_rate_series.fillna(0).to_json(date_format='iso'),
+        'hrArray': heart_rate_series.fillna(0).to_json(date_format='iso', orient='table'),
         'hrMean': mean_hr,
         'hrMax': max_hr,
         'hrMin': min_hr,
