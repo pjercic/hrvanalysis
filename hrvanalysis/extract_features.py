@@ -17,7 +17,6 @@ from pandas.core.series import Series
 import json
 from _operator import index
 from numpy import NaN
-import sys
 
 # limit functions that user might import using "from hrv-analysis import *"
 __all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
