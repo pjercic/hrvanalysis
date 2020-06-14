@@ -17,6 +17,7 @@ from pandas.core.series import Series
 import json
 from _operator import index
 from numpy import NaN
+import sys
 
 # limit functions that user might import using "from hrv-analysis import *"
 __all__ = ['get_time_domain_features', 'get_jamzone_time_domain_features', 'get_frequency_domain_features',
@@ -281,11 +282,14 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     if not rmssd_sliding_window.index.is_unique:
         return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
     
+    rmssdArray_json = json.loads(rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'))
+    hrArray_json = json.loads(heart_rate_series.fillna(0).to_json(date_format='iso', orient='table'))
+    
     jamzone_time_domain_features = {
 
         'rmssd': rmssd,
         'sdnn': sdnn,
-        'rmssdArray': rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'),
+        'rmssdArray': rmssdArray_json['data'],
         'rmssdAvg': avg_rmssd,
         'rmssdMin': min_rmssd,
         'rmssdMax': max_rmssd,
@@ -294,7 +298,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'rmssdRangeRatioFocus': focus_range_ratio_rmssd,
         'rmssdMaxSpeedStress': max_speed_stress_rmssd,
         'rmssdMaxSpeedRelax': max_speed_relax_rmssd,
-        'hrArray': heart_rate_series.fillna(0).to_json(date_format='iso', orient='table'),
+        'hrArray': hrArray_json['data'],
         'hrMean': mean_hr,
         'hrMax': max_hr,
         'hrMin': min_hr,
