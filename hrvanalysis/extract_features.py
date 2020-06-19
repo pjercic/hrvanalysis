@@ -228,6 +228,10 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     of Pacing and Electrophysiology, 1996
     """
 
+    # timestamp index must be unique
+    if not timestamp_list.is_unique:
+        return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
+    
     diff_nni = np.diff(nn_intervals)
     length_int = len(nn_intervals)
 
@@ -244,6 +248,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta(window_duration)]
     starting_value = time.size
     rmssd_sliding_window.index = nn_timestamps
+    
     rmssd_sliding_window = rmssd_sliding_window.rolling(window_duration).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
     rmssd_sliding_window[:starting_value] = NaN;
     
@@ -276,10 +281,6 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     min_hr = min(heart_rate_list)
     max_hr = max(heart_rate_list)
     std_hr = np.std(heart_rate_list)
-
-    # timestamp index must be unique
-    if not rmssd_sliding_window.index.is_unique:
-        return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
     
     rmssdArray_json = json.loads(rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'))
     hrArray_json = json.loads(heart_rate_series.fillna(0).to_json(date_format='iso', orient='table'))
