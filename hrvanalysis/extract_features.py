@@ -227,10 +227,6 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     clinical use, Task Force of The European Society of Cardiology and The North American Society \
     of Pacing and Electrophysiology, 1996
     """
-
-    # timestamp index must be unique
-    if not timestamp_list.is_unique:
-        return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
     
     diff_nni = np.diff(nn_intervals)
     length_int = len(nn_intervals)
@@ -245,6 +241,11 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     
     rmssd_sliding_window = Series(diff_nni)
     nn_timestamps = pd.to_datetime(timestamp_list[1:])
+    
+        # timestamp index must be unique
+    if not nn_timestamps.is_unique:
+        return json.dumps(json.loads('{"errorCode":203}'), ensure_ascii=False)
+    
     time = nn_timestamps[nn_timestamps < nn_timestamps[0] + pd.to_timedelta(window_duration)]
     starting_value = time.size
     rmssd_sliding_window.index = nn_timestamps
