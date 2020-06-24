@@ -79,3 +79,22 @@ _Code for testing the snapshot functionality on the server > python3 -c 'from te
 _Code for testing the morning snapshot functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_morning_snapshots_statistics()'_
 
 _Code for testing the 3dayme functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_3dayme_statistics()'_
+
+# Git Setup for remote repositories
+
+- Initialize the existing repo on BitBucket
+- Clone the repo from BitBucket to your local machine
+- Set URLs
+
+```console
+git remote rename origin upstream
+git remote add origin URL_TO_GITHUB_REPO
+git push origin master
+```
+
+- Now you can work with it just like any other github repo. To pull in patches from origin, and push to upstream
+
+```console
+git pull origin master
+git push upstream master 
+```
