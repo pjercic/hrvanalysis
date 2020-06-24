@@ -3,7 +3,7 @@ import random
 import json
 import numpy as np
 import pandas as pd
-from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics
+from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics, classify_hrv_statistics
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
 
@@ -86,3 +86,27 @@ def test_bugs():
     jdata = json.loads(time_domain_features)
     df = pd.read_json(jdata['rmssdArray'], typ='series')
     plot_timeseries(df);
+
+def test_classify_hrv_statistics(noElements):
+    
+    # rr_intervals_list contains integer values of RR-interval
+    if noElements <= 1000:
+        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
+        rr_test_intervals = rr_test_intervals[:noElements]
+        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
+        rr_test_timestamps = rr_test_timestamps[:noElements]
+    else:
+        rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
+        rr_test_intervals = rr_test_intervals.astype(int)
+        rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
+        rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
+        
+        labels_list_train = rr_test_intervals < 600
+        labels_list_train = labels_list_train.astype(str)
+        
+        rr_predict_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
+        rr_predict_intervals = rr_predict_intervals.astype(int)
+        rr_predict_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
+        rr_predict_timestamps = rr_predict_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
+    
+    classify_hrv_statistics(rr_test_intervals, rr_test_timestamps, labels_list_train, rr_predict_intervals, rr_predict_timestamps)

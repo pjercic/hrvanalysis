@@ -6,6 +6,7 @@ Created on Dec 5, 2019
 
 from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features
+from machinelearning import classify_features_supervised
 import json
 import pandas as pd
 
@@ -86,3 +87,6 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
         time_domain_features['errorCode'] = error_code
     
     return json.dumps(time_domain_features, ensure_ascii=False)
+
+def classify_hrv_statistics(nn_intervals_train: List[float], timestamp_list_train: List[str], labels_list_train: List[str], nn_intervals: List[float], timestamp_list: List[str]) -> dict:
+    classify_features_supervised(nn_intervals_train, timestamp_list_train, labels_list_train, nn_intervals, timestamp_list)
