@@ -250,7 +250,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     starting_value = time.size
     rmssd_sliding_window.index = nn_timestamps
     
-    rmssd_sliding_window = rmssd_sliding_window.rolling(window_duration).apply(lambda x: np.sqrt(np.mean(x ** 2)), raw=True)
+    rmssd_sliding_window = get_jamzone_continuous_time_domain_features(rmssd_sliding_window, window_duration, lambda x: np.sqrt(np.mean(x ** 2)))
     rmssd_sliding_window[:starting_value] = NaN;
     
     max_rmssd, avg_rmssd, min_rmssd = np.percentile(rmssd_sliding_window[starting_value:], [75, 50 ,25])
@@ -275,16 +275,16 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     cvnni = sdnn / mean_nni
 
     # Heart Rate equivalent features
-    heart_rate_list = np.divide(60000, nn_intervals)
-    heart_rate_series = pd.Series(heart_rate_list[1:])
+    heart_rate_series = pd.Series(nn_intervals[1:])
     heart_rate_series.index = pd.to_datetime(timestamp_list[1:])
+    heart_rate_list = get_jamzone_continuous_time_domain_features(heart_rate_series, window_duration, lambda x: np.mean(np.divide(60000, x)))
     mean_hr = np.mean(heart_rate_list)
     min_hr = min(heart_rate_list)
     max_hr = max(heart_rate_list)
     std_hr = np.std(heart_rate_list)
     
     rmssdArray_json = json.loads(rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'))
-    hrArray_json = json.loads(heart_rate_series.fillna(0).to_json(date_format='iso', orient='table'))
+    hrArray_json = json.loads(heart_rate_list.fillna(0).to_json(date_format='iso', orient='table'))
     
     jamzone_time_domain_features = {
 
@@ -309,6 +309,12 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
 
     return json.dumps(jamzone_time_domain_features, ensure_ascii=False)
 
+def get_jamzone_continuous_time_domain_features(values: Series, window_duration: str, fcn) -> Series:
+    
+    sliding_window_values = values.rolling(window_duration).apply(fcn, raw=True)
+    
+    return sliding_window_values
+    
 def get_geometrical_features(nn_intervals: List[float]) -> dict:
     """
     Returns a dictionary containing geometrical time domain features for HRV analyses.
