@@ -6,8 +6,7 @@ Created on Oct 21, 2019
 
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_time_domain_features,\
     get_jamzone_time_domain_features, get_frequency_domain_features, plot_psd, plot_poincare, plot
-from build.lib.hrvanalysis.plot import plot_distrib
-from hrvanalysis.plot import plot_timeseries
+from hrvanalysis.plot import plot_timeseries, plot_distrib
 
 # rr_intervals_list contains integer values of RR-interval
 #rr_intervals_list_1 = [1000, 1050, 1020, 1080, 3000, 1100, 1110, 1060]
@@ -37,7 +36,7 @@ nn_intervals_list = remove_ectopic_beats(rr_intervals=interpolated_rr_intervals,
 interpolated_nn_intervals = interpolate_nan_values(rr_intervals=nn_intervals_list)
 
 # Get time-domain and frequency domain features from our signal
-time_domain_features = get_jamzone_time_domain_features(nn_intervals_list)
+time_domain_features = get_time_domain_features(nn_intervals_list)
 freq_domain_features = get_frequency_domain_features(nn_intervals_list, method="lomb")
 
 # Plot Power Spectral Density
