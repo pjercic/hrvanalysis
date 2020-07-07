@@ -3,6 +3,21 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+### Visual Studio
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio solutions
+*.pyproj
+*.sln
+
+### Regular
+
 # C extensions
 *.so
 
