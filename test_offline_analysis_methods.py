@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import json
 from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics, classify_hrv_statistics, regression_hrv_statistics
-from machinelearning import classify_models_evaluation_knn, classify_models_evaluation_reg
+from machinelearning import classify_models_evaluation_knn, classify_models_evaluation_reg, classify_models_evaluation_linreg
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
 
@@ -154,15 +154,28 @@ def test_classifier_model_hrv_statistics(noElements):
         rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
         rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
         
-        #labels_list_train = rr_test_intervals < 600
-        #labels_list_train = labels_list_train.astype(str)
-        #classify_features = classify_models_evaluation_knn(rr_test_intervals, rr_test_timestamps, labels_list_train)
+        labels_list_train = rr_test_intervals < 600
+        labels_list_train = labels_list_train.astype(str)
+        classify_features = classify_models_evaluation_knn(rr_test_intervals, rr_test_timestamps, np.array(labels_list_train))
+
+def test_regression_model_hrv_statistics(noElements):
+
+    # rr_intervals_list contains integer values of RR-interval
+    if noElements <= 1000:
+        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
+        rr_test_intervals = rr_test_intervals[:noElements]
+        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
+        rr_test_timestamps = rr_test_timestamps[:noElements]
+    else:
+        rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
+        rr_test_intervals = rr_test_intervals.astype(int)
+        rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
+        rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
 
         labels_list_train = []
         time_domain_features = transform_to_snapshot_statistics(rr_test_intervals, rr_test_timestamps)
         time_domain_features = json.loads(time_domain_features)
         for obj in time_domain_features['hrArray']:
             labels_list_train.append(obj['values'])
-        classify_features = classify_models_evaluation_reg(rr_test_intervals[1:], rr_test_timestamps, np.array(labels_list_train))
-
-test_regression_hrv_statistics(2000)
+        #classify_features = classify_models_evaluation_reg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))
+        classify_features = classify_models_evaluation_linreg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))

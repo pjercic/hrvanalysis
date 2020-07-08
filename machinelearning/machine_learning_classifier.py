@@ -103,8 +103,8 @@ def classify_models_evaluation_knn(nn_intervals_train: List[float], timestamp_li
     labels = pd.Series(labels_list_train).unique()
     lookup_label_name = dict(zip([0, 1], labels))
     
-    X = np.array([nn_intervals_train]).T
-    y = np.array([labels_list_train]).T
+    X = nn_intervals_train.reshape(-1,1)
+    y = labels_list_train.reshape(-1,1)
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # How sensitive is k-NN classification accuracy to the choice of the 'k' parameter
@@ -177,6 +177,47 @@ def classify_models_evaluation_reg(nn_intervals_train: List[float], timestamp_li
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1-s)
             knnreg.fit(X_train, y_train)
             mean_scores.append(knnreg.score(X_test, y_test))
+        scores.append(np.mean(mean_scores))
+        
+    print(scores)
+    print('Best test split ratio {:.2f} for max accuracy of K-NN classifier on test set: {:.2f}'
+     .format(t[scores.index(max(scores))], max(scores)))
+
+def classify_models_evaluation_linreg(nn_intervals_train: List[float], timestamp_list_train: List[str], labels_list_train: List[float]) -> dict:
+
+    np.set_printoptions(precision=2)
+
+    # create a mapping from fruit label value to fruit name to make results easier to interpret
+    labels = pd.Series(labels_list_train).unique()
+    lookup_label_name = dict(zip([0, 1], labels))
+
+    X = nn_intervals_train.reshape(-1,1)
+    y = labels_list_train.reshape(-1,1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    # How sensitive is k-NN classification accuracy to the choice of the 'k' parameter
+    k_range = range(1,20)
+        
+    linreg = LinearRegression()
+    linreg.fit(X_train, y_train)
+    scores = linreg.score(X_test, y_test)
+    
+    print(scores)
+    print('Best accuracy of linear regression on test set: {:.2f}'.format(scores))
+
+    # How sensitive is k-NN classification accuracy to the train/test split proportion?
+    t = [0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2]
+    
+    linreg = LinearRegression()
+    
+    scores = []
+    for s in t:
+    
+        mean_scores = []
+        for i in range(1,10):
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1-s)
+            linreg.fit(X_train, y_train)
+            mean_scores.append(linreg.score(X_test, y_test))
         scores.append(np.mean(mean_scores))
         
     print(scores)
