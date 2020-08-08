@@ -257,6 +257,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     range_rmssd = max_rmssd - min_rmssd
     focus_range_ratio_rmssd = (avg_rmssd - min_rmssd) / range_rmssd
     calm_range_ratio_rmssd = 1 - focus_range_ratio_rmssd
+    health_score =  (np.abs(focus_range_ratio_rmssd - calm_range_ratio_rmssd) - 1) * (-10)
     
     rmssd_speed = (rmssd_sliding_window.diff() / Series(nn_intervals[1:], index=nn_timestamps)) * 1000
     max_speed_stress_rmssd = np.abs(rmssd_speed.min())
@@ -299,6 +300,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'rmssdRangeRatioFocus': focus_range_ratio_rmssd,
         'rmssdMaxSpeedStress': max_speed_stress_rmssd,
         'rmssdMaxSpeedRelax': max_speed_relax_rmssd,
+        'healthScore': health_score,
         'hrArray': hrArray_json['data'],
         'hrMean': mean_hr,
         'hrMax': max_hr,
