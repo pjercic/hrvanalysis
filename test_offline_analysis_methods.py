@@ -103,6 +103,7 @@ def test_classify_hrv_statistics(noElements):
         rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
         rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
         
+        # Use https://www.snorkel.org/ in te future to programatically label the data
         labels_list_train = rr_test_intervals < 600
         labels_list_train = labels_list_train.astype(str)
         
