@@ -1,3 +1,20 @@
+# Heart Rate Variability analysis
+
+## Installation / Prerequisites
+
+You can clone the repository and run setup:
+
+```python3
+git clone https://PetarJamzone@bitbucket.org/jamzone/composer.git
+python3 setup.py install
+```
+
+or install hrv-analysis using pip :
+
+```python3
+pip3 install hrv-analysis
+```
+
 # Machine Learning
 
 ## Installation / Prerequisites
@@ -16,24 +33,6 @@ In order to check your installation you can use
 python3 -m pip show scikit-learn # to see which version and where scikit-learn is installed
 python3 -m pip freeze # to see all packages installed in the active virtualenv
 python3 -c "import sklearn; sklearn.show_versions()"
-```
-## Getting started
-
-# Heart Rate Variability analysis
-
-## Installation / Prerequisites
-
-The easiest way to install hrv-analysis is using pip :
-
-```python3
-pip3 install hrv-analysis
-```
-
-you can also clone the repository:
-
-```python3
-git clone https://github.com/aura-healthcare/hrvanalysis.git
-python3 setup.py install
 ```
 
 ## Getting started
