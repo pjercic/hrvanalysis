@@ -5,7 +5,7 @@
 You can clone the repository and run setup:
 
 ```python3
-git clone https://PetarJamzone@bitbucket.org/jamzone/composer.git
+git clone https://<your-bitbucket-account>@bitbucket.org/jamzone/composer.git
 python3 setup.py install
 ```
 
