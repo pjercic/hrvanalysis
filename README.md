@@ -93,6 +93,11 @@ git remote add origin URL_TO_GITHUB_REPO
 git push origin master
 ```
 
+- Check to control the sources setup
+
+```console
+git remote -v
+```
 - Now you can work with it just like any other github repo. To pull in patches from origin, and push to upstream
 
 ```console
