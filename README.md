@@ -38,9 +38,11 @@ python3 -c "import sklearn; sklearn.show_versions()"
 ## Getting started
 
 When the new data [Datetime, RRs] from the DB has been received, call the method **transform_to_snapshot_statistics** from **offline_analysis**.
+In the case of a bigger quantities of data, use the *NAMED PIPES* and provide the string path to the *_ipc* version of the methods.
 
 ```python3
 transform_to_snapshot_statistics(rr_intervals, rr_timestamps)
+transform_to_snapshot_statistics_ipc(path_named_pipe)
 ```
 
 When the morning snapshot data [Datetime, RRs] from the DB has been received, call the method **transform_to_morning_snapshots_statistics** from **offline_analysis**.

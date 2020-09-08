@@ -1,10 +1,12 @@
 import os
 import random
+import multiprocessing
 import json
 import numpy as np
 import pandas as pd
 import json
 from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics, classify_hrv_statistics, regression_hrv_statistics
+from offline_analysis import transform_to_snapshot_statistics_ipc
 from machinelearning import classify_models_evaluation_knn, classify_models_evaluation_reg, classify_models_evaluation_linreg
 from hrvanalysis.plot import plot_timeseries
 from numpy import int
@@ -15,6 +17,8 @@ TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './tests/test_nn
 TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_large.txt')
 TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_nn_intervals.txt')
 TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_timestamps.txt')
+
+path = "./mypipe"
 
 def load_test_data(path):
     # Load test rr_intervals data
@@ -47,6 +51,40 @@ def test_transform_to_snapshot_statistics(noElements):
     time_domain_features = transform_to_snapshot_statistics(rr_test_intervals, rr_test_timestamps)
     
     print(time_domain_features)
+
+def test_transform_to_snapshot_statistics_ipc(noElements):
+    
+    # rr_intervals_list contains integer values of RR-interval
+    if noElements <= 1000:
+        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
+        rr_test_intervals = rr_test_intervals[:noElements]
+        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
+        rr_test_timestamps = rr_test_timestamps[:noElements]
+    else:
+        rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
+        rr_test_intervals = rr_test_intervals.astype(int)
+        rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=noElements, freq = '600ms')
+        rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
+    
+    json_rr_test = pd.Series(rr_test_intervals)
+    json_rr_test.index = rr_test_timestamps
+    rrArray_json = json.loads(json_rr_test.fillna(0).to_json(date_format='iso', orient='table'))
+    input_json = rrArray_json['data']
+        
+    try:
+        os.mkfifo(path)
+    except FileExistsError:
+        os.remove(path)
+        os.mkfifo(path)
+        pass
+        
+    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc, args=(path,)).start()
+    
+    with open(path, 'wb') as p:
+        p.write(json.dumps(input_json, ensure_ascii=False).encode("utf8"))
+    
+    with open(path, 'rb') as p:
+        print(p.read().decode("utf8"))
     
 def test_transform_to_3dayme_statistics():
     

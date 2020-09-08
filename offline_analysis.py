@@ -9,6 +9,7 @@ from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_v
 from machinelearning import classify_features_supervised_knn, classify_features_supervised_reg, classify_features_supervised_linreg
 import json
 import pandas as pd
+import os
 
 def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
@@ -16,6 +17,28 @@ def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[
   
     return time_domain_features
 
+def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
+    
+    with open(path_named_pipe, 'rb') as p:
+        json_input_list = p.read().decode("utf8")
+    
+    # If in future we transport multiple streams of data, use the table schema
+    # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
+    
+    data_temp = pd.read_json(json_input_list)
+    df = pd.DataFrame(data_temp)
+    
+    rr_list = df['values'].to_numpy()
+    timestamp_list = df['index'].tolist()
+    
+    time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '60s')
+    
+    with open(path_named_pipe, 'wb') as p:
+        p.write(time_domain_features.encode("utf8"))
+
+    # Check if the pipe needs to be removed
+    # os.remove(path) # Do this on the Go side
+    
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
     starting_value = 0
