@@ -104,3 +104,10 @@ git remote -v
 git pull origin master
 git push upstream master 
 ```
+
+Update version number
+
+```console
+git tag -a v1.0.0 -m 'Version 1.0.0'
+git push --tags
+```
