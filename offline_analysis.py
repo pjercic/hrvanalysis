@@ -102,6 +102,11 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     # This replace ectopic beats nan values with linear interpolation
     interpolated_nn_intervals = interpolate_nan_values(rr_intervals=nn_intervals_list)
     
+    # Remove leading NaN values after filtering
+    s = pd.Series(interpolated_nn_intervals)
+    interpolated_nn_intervals = s.loc[s.first_valid_index():].tolist()
+    timestamp_list = timestamp_list[-len(interpolated_nn_intervals):]
+
     # Get time-domain and frequency domain features from our signal
     time_domain_features = get_jamzone_time_domain_features(interpolated_nn_intervals, timestamp_list, window_duration)
     

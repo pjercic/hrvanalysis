@@ -15,8 +15,8 @@ TEST_DATA_FILENAME_10 = os.path.join(os.path.dirname(__file__), './tests/test_nn
 TEST_DATA_FILENAME_20 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_20.txt')
 TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_60.txt')
 TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_large.txt')
-TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_nn_intervals.txt')
-TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200603_test_timestamps.txt')
+TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200729_test_nn_intervals.txt')
+TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200729_test_timestamps.txt')
 
 path = "./mypipe"
 
