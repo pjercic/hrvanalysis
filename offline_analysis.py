@@ -113,6 +113,7 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     time_domain_features = json.loads(time_domain_features)
     if error_code != 0:
         time_domain_features['errorCode'] = error_code
+    time_domain_features['version'] = '1.0.0'
     
     return json.dumps(time_domain_features, ensure_ascii=False)
 
