@@ -279,9 +279,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
     heart_rate_series = pd.Series(nn_intervals[1:])
     heart_rate_series.index = pd.to_datetime(timestamp_list[1:])
     heart_rate_list = get_jamzone_continuous_time_domain_features(heart_rate_series, window_duration, lambda x: np.mean(np.divide(60000, x)))
-    mean_hr = np.mean(heart_rate_list)
-    min_hr = min(heart_rate_list)
-    max_hr = max(heart_rate_list)
+    max_hr, mean_hr, min_hr = np.percentile(heart_rate_list, [75, 50 ,25])
     std_hr = np.std(heart_rate_list)
     
     rmssdArray_json = json.loads(rmssd_sliding_window.fillna(0).to_json(date_format='iso', orient='table'))
