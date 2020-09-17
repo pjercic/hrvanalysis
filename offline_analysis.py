@@ -38,7 +38,32 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
 
     # Check if the pipe needs to be removed
     # os.remove(path) # Do this on the Go side
+
+def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
     
+    with open(path_named_pipe, 'rb') as p:
+        json_input_list = p.read().decode("utf8")
+    
+    with open(path_named_pipe, 'wb') as p:
+        p.write(json_input_list.encode("utf8"))
+
+def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
+    
+    with open(path_named_pipe, 'rb') as p:
+        json_input_list = p.read().decode("utf8")
+    
+    # If in future we transport multiple streams of data, use the table schema
+    # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
+    
+    try:
+        data_temp = pd.read_json(json_input_list)
+        time_domain_features = json.dumps(json.loads('{"errorCode":202}'), ensure_ascii=False)
+    except:
+        time_domain_features = json.dumps(json.loads('{"errorCode":404}'), ensure_ascii=False)
+    
+    with open(path_named_pipe, 'wb') as p:
+        p.write(time_domain_features.encode("utf8"))
+        
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
     starting_value = 0
