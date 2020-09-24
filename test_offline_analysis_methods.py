@@ -80,7 +80,7 @@ def test_transform_to_snapshot_statistics_ipc(noElements):
         os.mkfifo(path)
         pass
         
-    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc, args=(path,)).start()
+    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc_echo, args=(path,)).start()
     
     with open(path, 'wb') as p:
         p.write(json.dumps(input_json, ensure_ascii=False).encode("utf8"))
