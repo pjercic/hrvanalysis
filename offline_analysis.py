@@ -41,11 +41,19 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
 
 def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
     
-    with open(path_named_pipe, 'rb') as p:
-        json_input_list = p.read().decode("utf8")
+    try:
+        with open(path_named_pipe, 'rb') as p:
+            json_input_list = '[successful] Hello from python: ' + p.read().decode("utf8")
+    except:
+        json_input_list = '[failed] Error reading data from the PIPE'
     
-    with open(path_named_pipe, 'wb') as p:
-        p.write(json_input_list.encode("utf8"))
+    try:
+        with open(path_named_pipe, 'wb') as p:
+            p.write(json_input_list.encode("utf8"))
+    except:
+        return 'END transform_to_snapshot_statistics_ipc_echo: [failed] Error writing data from the PIPE ' + json_input_list
+
+    return 'END transform_to_snapshot_statistics_ipc_echo: ' + json_input_list
 
 def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
     
@@ -63,6 +71,8 @@ def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
     
     with open(path_named_pipe, 'wb') as p:
         p.write(time_domain_features.encode("utf8"))
+
+    return time_domain_features
         
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 
