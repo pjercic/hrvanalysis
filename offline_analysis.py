@@ -43,14 +43,25 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
 def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
     
     try:
-        with open(path_named_pipe, 'rt') as p:
-            json_input_list = '[successful] Hello from python: ' + p.read()
+        # get file descriptor of the input pipe without blocking
+        fd = os.open(path_named_pipe, os.O_RDONLY | os.O_NONBLOCK)
+        
+        # read input pipe
+        with os.fdopen(fd) as input_pipe:
+            message = input_pipe.read()
+            json_input_list = '[successful] Hello from python: ' + message
+            if not message:
+                json_input_list = '[failed] Named pipe is empty'
+                raise ValueError('Named pipe is empty')
     except:
         json_input_list = '[failed] Error reading data from the PIPE'
     
     try:
-        with open(path_named_pipe, 'wt') as p:
-            p.write(json_input_list)
+        # write generated data to the pipe
+        with open(path_named_pipe, 'wt') as output_pipe:
+            #json.dump(json_example, output_pipe)
+            output_pipe.write(json_input_list + '\n')
+    
     except:
         return 'END transform_to_snapshot_statistics_ipc_echo: [failed] Error writing data from the PIPE ' + json_input_list
 
