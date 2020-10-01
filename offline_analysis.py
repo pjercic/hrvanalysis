@@ -19,13 +19,26 @@ def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[
 
 def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
     
-    with open(path_named_pipe, 'rt') as p:
-        json_input_list = p.read()
+    try:
+        # get file descriptor of the input pipe without blocking
+        fd = os.open(path_named_pipe, os.O_RDONLY | os.O_NONBLOCK)
+        
+        # read input pipe
+        with os.fdopen(fd) as input_pipe:
+            message = input_pipe.read()
+            if not message:
+                raise ValueError('Named pipe is empty')
+                return -1
+    except:
+        raise ConnectionError('Error reading data from the PIPE')      
+        return -1
     
-    # If in future we transport multiple streams of data, use the table schema
-    # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
-    
-    data_temp = json.loads(json_input_list)
+    try:    
+        data_temp = json.loads(message)
+    except:
+        raise SyntaxError('Error parsing JSON data from the PIPE')      
+        return -1
+        
     data_temp = pd.read_json(json.dumps(data_temp['rrs'], ensure_ascii=False))
     df = pd.DataFrame(data_temp)
     
@@ -34,11 +47,17 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
     
     time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '60s')
     
-    with open(path_named_pipe, 'wt') as p:
-        p.write(time_domain_features)
-
-    # Check if the pipe needs to be removed
-    # os.remove(path) # Do this on the Go side
+    try:
+        # write generated data to the pipe
+        with open(path_named_pipe, 'wt') as output_pipe:
+            #json.dump(json_example, output_pipe)
+            output_pipe.write(time_domain_features + '\n')
+    
+    except:
+        raise ConnectionError('Error writing data from the PIPE')      
+        return -1
+        
+    return 0
 
 def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
     
@@ -69,22 +88,35 @@ def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
 
 def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
     
-    with open(path_named_pipe, 'rt') as p:
-        json_input_list = p.read()
-    
-    # If in future we transport multiple streams of data, use the table schema
-    # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
+    try:
+        # get file descriptor of the input pipe without blocking
+        fd = os.open(path_named_pipe, os.O_RDONLY | os.O_NONBLOCK)
+        
+        # read input pipe
+        with os.fdopen(fd) as input_pipe:
+            message = input_pipe.read()
+            if not message:
+                json_input_list = '[failed] Named pipe is empty'
+                raise ValueError('Named pipe is empty')
+    except:
+        json_input_list = '[failed] Error reading data from the PIPE'
+        
+    try:
+        data_temp = pd.read_json(message)
+        json_input_list = json.dumps(json.loads('{"errorCode":202}'), ensure_ascii=False)
+    except:
+        json_input_list = json.dumps(json.loads('{"errorCode":404}'), ensure_ascii=False)
     
     try:
-        data_temp = pd.read_json(json_input_list)
-        time_domain_features = json.dumps(json.loads('{"errorCode":202}'), ensure_ascii=False)
-    except:
-        time_domain_features = json.dumps(json.loads('{"errorCode":404}'), ensure_ascii=False)
+        # write generated data to the pipe
+        with open(path_named_pipe, 'wt') as output_pipe:
+            #json.dump(json_example, output_pipe)
+            output_pipe.write(json_input_list + '\n')
     
-    with open(path_named_pipe, 'wt') as p:
-        p.write(time_domain_features)
+    except:
+        return 'END transform_to_snapshot_statistics_ipc_error: [failed] Error writing data from the PIPE ' + json_input_list
 
-    return time_domain_features
+    return 'END transform_to_snapshot_statistics_ipc_error: ' + json_input_list
         
 def transform_to_3dayme_statistics(rr_list: List[float], timestamp_list: List[str]) -> dict:
 

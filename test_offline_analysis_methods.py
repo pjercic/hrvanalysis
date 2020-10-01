@@ -80,7 +80,7 @@ def test_transform_to_snapshot_statistics_ipc(noElements):
         os.mkfifo(path)
         pass
         
-    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc_echo, args=(path,)).start()
+    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc_error, args=(path,)).start()
     
     with open(path, 'wt') as p:
         p.write('{"rrs":' + json.dumps(input_json, ensure_ascii=False) + '}\n')
@@ -220,5 +220,3 @@ def test_regression_model_hrv_statistics(noElements):
             labels_list_train.append(obj['values'])
         #classify_features = classify_models_evaluation_reg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))
         classify_features = classify_models_evaluation_linreg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))
-
-test_transform_to_snapshot_statistics_ipc(2000)
