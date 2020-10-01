@@ -80,7 +80,7 @@ def test_transform_to_snapshot_statistics_ipc(noElements):
         os.mkfifo(path)
         pass
         
-    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc_error, args=(path,)).start()
+    multiprocessing.Process(target=transform_to_snapshot_statistics_ipc, args=(path,)).start()
     
     with open(path, 'wt') as p:
         p.write('{"rrs":' + json.dumps(input_json, ensure_ascii=False) + '}\n')
