@@ -19,13 +19,14 @@ def transform_to_snapshot_statistics(rr_list: List[float], timestamp_list: List[
 
 def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
     
-    with open(path_named_pipe, 'rb') as p:
-        json_input_list = p.read().decode("utf8")
+    with open(path_named_pipe, 'rt') as p:
+        json_input_list = p.read()
     
     # If in future we transport multiple streams of data, use the table schema
     # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
     
-    data_temp = pd.read_json(json_input_list)
+    data_temp = json.loads(json_input_list)
+    data_temp = pd.read_json(json.dumps(data_temp['rrs'], ensure_ascii=False))
     df = pd.DataFrame(data_temp)
     
     rr_list = df['values'].to_numpy()
@@ -33,8 +34,8 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
     
     time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '60s')
     
-    with open(path_named_pipe, 'wb') as p:
-        p.write(time_domain_features.encode("utf8"))
+    with open(path_named_pipe, 'wt') as p:
+        p.write(time_domain_features)
 
     # Check if the pipe needs to be removed
     # os.remove(path) # Do this on the Go side
@@ -42,14 +43,14 @@ def transform_to_snapshot_statistics_ipc(path_named_pipe: str):
 def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
     
     try:
-        with open(path_named_pipe, 'rb') as p:
-            json_input_list = '[successful] Hello from python: ' + p.read().decode("utf8")
+        with open(path_named_pipe, 'rt') as p:
+            json_input_list = '[successful] Hello from python: ' + p.read()
     except:
         json_input_list = '[failed] Error reading data from the PIPE'
     
     try:
-        with open(path_named_pipe, 'wb') as p:
-            p.write(json_input_list.encode("utf8"))
+        with open(path_named_pipe, 'wt') as p:
+            p.write(json_input_list)
     except:
         return 'END transform_to_snapshot_statistics_ipc_echo: [failed] Error writing data from the PIPE ' + json_input_list
 
@@ -57,8 +58,8 @@ def transform_to_snapshot_statistics_ipc_echo(path_named_pipe: str):
 
 def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
     
-    with open(path_named_pipe, 'rb') as p:
-        json_input_list = p.read().decode("utf8")
+    with open(path_named_pipe, 'rt') as p:
+        json_input_list = p.read()
     
     # If in future we transport multiple streams of data, use the table schema
     # print("{'schema': {'fields': [{'name': 'index', 'type': 'string'}, {'name': 'values', 'type': 'integer'}], 'primaryKey': ['index'], 'pandas_version': '0.20.0'}, 'data': " + json_input_list + "}") 
@@ -69,8 +70,8 @@ def transform_to_snapshot_statistics_ipc_error(path_named_pipe: str):
     except:
         time_domain_features = json.dumps(json.loads('{"errorCode":404}'), ensure_ascii=False)
     
-    with open(path_named_pipe, 'wb') as p:
-        p.write(time_domain_features.encode("utf8"))
+    with open(path_named_pipe, 'wt') as p:
+        p.write(time_domain_features)
 
     return time_domain_features
         

@@ -82,11 +82,11 @@ def test_transform_to_snapshot_statistics_ipc(noElements):
         
     multiprocessing.Process(target=transform_to_snapshot_statistics_ipc_echo, args=(path,)).start()
     
-    with open(path, 'wb') as p:
-        p.write(json.dumps(input_json, ensure_ascii=False).encode("utf8"))
+    with open(path, 'wt') as p:
+        p.write('{"rrs":' + json.dumps(input_json, ensure_ascii=False) + '}')
     
-    with open(path, 'rb') as p:
-        print(p.read().decode("utf8"))
+    with open(path, 'rt') as p:
+        print(p.read())
     
 def test_transform_to_3dayme_statistics():
     
