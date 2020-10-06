@@ -42,7 +42,7 @@ In the case of a bigger quantities of data, use the *NAMED PIPES* and provide th
 In the case of IPC, the data is expected in JSON format in the following way:
 
 ```python3
-[{'index': '2020-07-27T22:09:54.983Z\n', 'values': 256}, {'index': '2020-07-27T22:09:56.85Z\n', 'values': 1530}, {'index': '2020-07-27T22:09:58.825Z\n', 'values': 2225}, {'index': '2020-07-27T22:10:07.471Z\n', 'values': 7366}, {'index': '2020-07-27T22:10:08.546Z\n', 'values': 2256}, {'index': '2020-07-27T22:10:09.178Z\n', 'values': 522}, {'index': '2020-07-27T22:10:14.94Z\n', 'values': 5663}, ... {'index': '2020-07-27T22:12:58.153Z\n', 'values': 834}, {'index': '2020-07-27T22:12:59.004Z', 'values': 827}]
+{"rrs": [{'index': '2020-07-27T22:09:54.983Z\n', 'values': 256}, {'index': '2020-07-27T22:09:56.85Z\n', 'values': 1530}, {'index': '2020-07-27T22:09:58.825Z\n', 'values': 2225}, {'index': '2020-07-27T22:10:07.471Z\n', 'values': 7366}, {'index': '2020-07-27T22:10:08.546Z\n', 'values': 2256}, {'index': '2020-07-27T22:10:09.178Z\n', 'values': 522}, {'index': '2020-07-27T22:10:14.94Z\n', 'values': 5663}, ... {'index': '2020-07-27T22:12:58.153Z\n', 'values': 834}, {'index': '2020-07-27T22:12:59.004Z', 'values': 827}]}
 ```
 
 ```python3
@@ -64,16 +64,18 @@ Explanation of the mobile app values returning from the library
 
 - HRV RMSSD avg: 'rmssd', **RMSSD for a given period (use only when medically grade sensor, since prone to outliers)**
 - HRV SDNN avg: 'sdnn', **SDNN is used for longer periods of known and similar length, which allows the comparison**
-- HRV graph: 'rmssdArray', **A list indexed with datetime values received as input
+- HRV graph: 'rmssdArray', **A list indexed with datetime values received as input**
 - HRV avg: 'rmssdAvg', **Median RMSSD for a given period, corrected according to min, max and range values**
 - HRV min: 'rmssdMin',
 - HRV max: 'rmssdMax',
-- HRV range: 'rmssdRange', **(rmssdRange / 200) * 100
-- Calm percentage: 'rmssdRangeRatioCalm', **rmssdRangeRatioCalm * 100
-- Focus percentage: 'rmssdRangeRatioFocus', **rmssdRangeRatioFocus * 100
-- Focus speed: 'rmssdMaxSpeedStress', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]
-- Calm speed: 'rmssdMaxSpeedRelax', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]
-- HR graph: 'hrArray', **A list indexed with datetime values received as input
+- HRV range: 'rmssdRange', **(rmssdRange / 200) * 100**
+- Calm percentage: 'rmssdRangeRatioCalm', **rmssdRangeRatioCalm * 100**
+- Focus percentage: 'rmssdRangeRatioFocus', **rmssdRangeRatioFocus * 100**
+- Focus speed: 'rmssdMaxSpeedStress', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]**
+- Calm speed: 'rmssdMaxSpeedRelax', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]**
+- Rest score: restScore, **this values is index score [1-10] specifying how good the average HRV is**
+- Balance score: balanceScore, **this values is index score [1-10] specifying how balanced is user to keep the same level of HRV**
+- HR graph: 'hrArray', **A list indexed with datetime values received as input**
 - HR avg: 'hrMean': mean_hr,
 - HR max: 'hrMax': max_hr,
 - HR min: 'hrMin': min_hr,
