@@ -458,6 +458,95 @@ def get_frequency_domain_features(nn_intervals: List[float], method: str = WELCH
 
     return frequency_domain_features
 
+def get_jamzone_frequency_domain_features(nn_intervals: List[float], method: str = LOMB_METHOD,
+                                  sampling_frequency: int = 4, interpolation_method: str = "linear",
+                                  vlf_band: namedtuple = VlfBand(0.003, 0.04),
+                                  lf_band: namedtuple = LfBand(0.04, 0.15),
+                                  hf_band: namedtuple = HfBand(0.15, 0.40)) -> dict:
+    """
+    Returns a dictionary containing frequency domain features for HRV analyses.
+    To our knowledge, you might use this function on short term recordings, from 2 to 5 minutes  \
+    window.
+
+    Parameters
+    ---------
+    nn_intervals : list
+        list of Normal to Normal Interval
+    method : str
+        Method used to calculate the psd. Choice are Welch's FFT or Lomb method.
+    sampling_frequency : int
+        Frequency at which the signal is sampled. Common value range from 1 Hz to 10 Hz,
+        by default set to 4 Hz. No need to specify if Lomb method is used.
+    interpolation_method : str
+        kind of interpolation as a string, by default "linear". No need to specify if Lomb
+        method is used.
+    vlf_band : tuple
+        Very low frequency bands for features extraction from power spectral density.
+    lf_band : tuple
+        Low frequency bands for features extraction from power spectral density.
+    hf_band : tuple
+        High frequency bands for features extraction from power spectral density.
+
+    Returns
+    ---------
+    frequency_domain_features : dict
+        Dictionary containing frequency domain features for HRV analyses. There are details
+        about each features below.
+
+    Notes
+    ---------
+    Details about feature engineering...
+
+    - **total_power** : Total power density spectral
+
+    - **vlf** : variance ( = power ) in HRV in the Very low Frequency (.003 to .04 Hz by default). \
+    Reflect an intrinsic rhythm produced by the heart which is modulated primarily by sympathetic \
+    activity.
+
+    - **lf** : variance ( = power ) in HRV in the low Frequency (.04 to .15 Hz). Reflects a \
+    mixture of sympathetic and parasympathetic activity, but in long-term recordings, it reflects \
+    sympathetic activity and can be reduced by the beta-adrenergic antagonist propanolol.
+
+    - **hf**: variance ( = power ) in HRV in the High Frequency (.15 to .40 Hz by default). \
+    Reflects fast changes in beat-to-beat variability due to parasympathetic (vagal) activity. \
+    Sometimes called the respiratory band because it corresponds to HRV changes related to the \
+    respiratory cycle and can be increased by slow, deep breathing (about 6 or 7 breaths per \
+    minute) and decreased by anticholinergic drugs or vagal blockade.
+
+    - **lf_hf_ratio** : lf/hf ratio is sometimes used by some investigators as a quantitative \
+    mirror of the sympatho/vagal balance.
+
+    - **lfnu** : normalized lf power.
+
+    - **hfnu** : normalized hf power.
+
+    References
+    ----------
+    .. [1] Heart rate variability - Standards of measurement, physiological interpretation, and \
+    clinical use, Task Force of The European Society of Cardiology and The North American Society \
+    of Pacing and Electrophysiology, 1996
+
+    .. [2] Signal Processing Methods for Heart Rate Variability - Gari D. Clifford, 2002
+
+    """
+
+    # ----------  Handle pandas series  ---------- #
+
+    nn_intervals = list(nn_intervals)
+
+    # ----------  Compute frequency & Power spectral density of signal  ---------- #
+    freq, psd = _get_freq_psd_from_nn_intervals(nn_intervals=nn_intervals, method=method,
+                                                sampling_frequency=sampling_frequency,
+                                                interpolation_method=interpolation_method,
+                                                vlf_band=vlf_band, hf_band=hf_band)
+
+    # ---------- Features calculation ---------- #
+    frequency_domain_features = _get_features_from_psd(freq=freq, psd=psd,
+                                                      vlf_band=vlf_band,
+                                                      lf_band=lf_band,
+                                                      hf_band=hf_band)
+
+    return json.dumps(frequency_domain_features, ensure_ascii=False)
 
 def _get_freq_psd_from_nn_intervals(nn_intervals: List[float], method: str = WELCH_METHOD,
                                     sampling_frequency: int = 4,

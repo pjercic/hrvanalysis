@@ -5,7 +5,7 @@ Created on Dec 5, 2019
 '''
 
 from typing import List
-from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features
+from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features, get_jamzone_frequency_domain_features
 from machinelearning import classify_features_supervised_knn, classify_features_supervised_reg, classify_features_supervised_linreg
 import json
 import pandas as pd
@@ -188,13 +188,16 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
 
     # Get time-domain and frequency domain features from our signal
     time_domain_features = get_jamzone_time_domain_features(interpolated_nn_intervals, timestamp_list, window_duration)
+    freq_domain_features = get_jamzone_frequency_domain_features(interpolated_nn_intervals)
     
-    time_domain_features = json.loads(time_domain_features)
+    hrv_domain_features = json.loads(time_domain_features)
+    freq_domain_features = json.loads(freq_domain_features)
     if error_code != 0:
-        time_domain_features['errorCode'] = error_code
-    time_domain_features['version'] = '1.0.0'
+        hrv_domain_features['errorCode'] = error_code
+    hrv_domain_features['lfHfRatio'] = freq_domain_features['lf_hf_ratio']
+    hrv_domain_features['version'] = '1.0.0'
     
-    return json.dumps(time_domain_features, ensure_ascii=False)
+    return json.dumps(hrv_domain_features, ensure_ascii=False)
 
 def classify_hrv_statistics(nn_intervals_train: List[float], timestamp_list_train: List[str], labels_list_train: List[str], nn_intervals: List[float], timestamp_list: List[str]) -> dict:
     
