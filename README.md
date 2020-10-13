@@ -74,7 +74,7 @@ Explanation of the mobile app values returning from the library
 - Focus speed: 'rmssdMaxSpeedStress', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]**
 - Calm speed: 'rmssdMaxSpeedRelax', **this value is RMSSD per second [Rps], like kilometers per hour [kmh]**
 - Rest score: 'restScore', **this values is index score [1-10] specifying how good the average HRV is**
-- Balance score: 'balanceScore', **this values is index score [1-10] specifying how balanced is user to keep the same level of HRV**
+- Balance score: 'balanceScore', **this values is index score [1-6] specifying how balanced is user**
 - HR graph: 'hrArray', **A list indexed with datetime values received as input**
 - HR avg: 'hrMean': mean_hr,
 - HR max: 'hrMax': max_hr,
