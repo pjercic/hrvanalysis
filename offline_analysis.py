@@ -195,6 +195,7 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     if error_code != 0:
         hrv_domain_features['errorCode'] = error_code
     hrv_domain_features['lfHfRatio'] = freq_domain_features['lf_hf_ratio']
+    hrv_domain_features['balanceScore'] = freq_domain_features['balance_score']
     hrv_domain_features['version'] = '1.0.0'
     
     return json.dumps(hrv_domain_features, ensure_ascii=False)
