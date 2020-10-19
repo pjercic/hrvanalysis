@@ -299,6 +299,7 @@ def get_jamzone_time_domain_features(nn_intervals: List[float], timestamp_list: 
         'rmssdRangeRatioFocus': focus_range_ratio_rmssd,
         'rmssdMaxSpeedStress': max_speed_stress_rmssd,
         'rmssdMaxSpeedRelax': max_speed_relax_rmssd,
+        'restGroup': rest_score,
         'restScore': rest_score,
         'hrArray': hrArray_json['data'],
         'hrMean': mean_hr,
@@ -545,7 +546,8 @@ def get_jamzone_frequency_domain_features(nn_intervals: List[float], method: str
                                                       lf_band=lf_band,
                                                       hf_band=hf_band)
 
-    frequency_domain_features['balance_score'] = np.maximum(np.log2(frequency_domain_features['lf_hf_ratio'] * 100 / 25), 0.0) + 1
+    frequency_domain_features['balance_group'] = np.maximum(np.log2(frequency_domain_features['lf_hf_ratio'] * 100 / 25), 0.0) + 1
+    frequency_domain_features['balance_score'] = np.maximum((- np.square(frequency_domain_features['balance_group']) * 9 / 4) + (27 / 2 * frequency_domain_features['balance_group']) - (41 / 4), 1.0)
 
     return json.dumps(frequency_domain_features, ensure_ascii=False)
 
