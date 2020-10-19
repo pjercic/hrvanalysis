@@ -199,7 +199,7 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     hrv_domain_features['balanceScore'] = freq_domain_features['balance_score']
     hrv_domain_features['vitalityScore'] = 0.833 * hrv_domain_features['balanceScore'] + 0.167 * hrv_domain_features['restScore'] + 0.0000000000000001457
     hrv_domain_features['vitalityGroup'] = hrv_domain_features['vitalityScore']
-    hrv_domain_features['version'] = '1.0.0'
+    hrv_domain_features['version'] = '1.0.1'
     
     return json.dumps(hrv_domain_features, ensure_ascii=False)
 
