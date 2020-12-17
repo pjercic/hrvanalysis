@@ -5,7 +5,7 @@ import json
 import numpy as np
 import pandas as pd
 import json
-from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics, classify_hrv_statistics, regression_hrv_statistics
+from offline_analysis import transform_to_snapshot_statistics, transform_to_3dayme_statistics, transform_to_morning_snapshots_statistics, classify_hrv_statistics, regression_hrv_statistics, compare_snapshots
 from offline_analysis import transform_to_snapshot_statistics_ipc, transform_to_snapshot_statistics_ipc_echo, transform_to_snapshot_statistics_ipc_error
 from machinelearning import classify_models_evaluation_knn, classify_models_evaluation_reg, classify_models_evaluation_linreg
 from hrvanalysis.plot import plot_timeseries
@@ -220,3 +220,21 @@ def test_regression_model_hrv_statistics(noElements):
             labels_list_train.append(obj['values'])
         #classify_features = classify_models_evaluation_reg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))
         classify_features = classify_models_evaluation_linreg(rr_test_intervals[1:], rr_test_timestamps[1:], np.array(labels_list_train))
+
+def test_compare_snapshots():
+    
+    input = '{"1":[101,301,200],"2":[102,302,202],"3":[666]}';
+    
+    config = '{"mean":"True"}'
+    
+    try:
+        os.mkfifo(path)
+    except FileExistsError:
+        os.remove(path)
+        os.mkfifo(path)
+        pass
+        
+    multiprocessing.Process(target=compare_snapshots, args=(input, config, path,)).start()
+    
+    with open(path, 'rt') as p:
+        print(p.read())

@@ -7,6 +7,7 @@ Created on Dec 5, 2019
 from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features, get_jamzone_frequency_domain_features
 from machinelearning import classify_features_supervised_knn, classify_features_supervised_reg, classify_features_supervised_linreg
+from dataanalysis import compare
 import json
 import pandas as pd
 import os
@@ -211,3 +212,19 @@ def regression_hrv_statistics(nn_intervals_train: List[float], timestamp_list_tr
     
     #return classify_features_supervised_reg(nn_intervals_train, timestamp_list_train, labels_list_train, nn_intervals, timestamp_list)
     return classify_features_supervised_linreg(nn_intervals_train, timestamp_list_train, labels_list_train, nn_intervals, timestamp_list)
+
+def compare_snapshots (snapshotGroups: str, configAnswer: str, path_named_pipe: str) ->  int:
+    
+    answer = compare(snapshotGroups, configAnswer)
+    
+    try:
+        # write generated data to the pipe
+        with open(path_named_pipe, 'wt') as output_pipe:
+            #json.dump(json_example, output_pipe)
+            output_pipe.write(answer + '\n')
+    
+    except:
+        raise ConnectionError('Error writing data from the PIPE')      
+        return -1
+    
+    return 1
