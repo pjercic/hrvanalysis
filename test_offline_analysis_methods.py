@@ -280,9 +280,7 @@ def test_regression_model_hrv_statistics(noElements):
 
 def test_compare_snapshots():
     
-    input = '{"1":[101,301,200],"2":[102,302,202],"3":[666]}';
-    
-    config = '{"mean":"True"}'
+    input = '{"grouping":[{"snapshotsID":[101,301,200]},{"snapshotsID":[102,302,202]},{"snapshotsID":[666]}],"answer":{"mean":"true","range":"false","difference":"true"}}';
     
     try:
         os.mkfifo(path)
@@ -291,7 +289,7 @@ def test_compare_snapshots():
         os.mkfifo(path)
         pass
         
-    multiprocessing.Process(target=compare_snapshots, args=(input, config, path,)).start()
+    multiprocessing.Process(target=compare_snapshots, args=(input, path,)).start()
     
     with open(path, 'rt') as p:
         print(p.read())

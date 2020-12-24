@@ -11,7 +11,7 @@ Created on Dec 17, 2020
 
 import json
 
-def compare(snapshotGroups: str, configAnswer: str) -> dict:
+def compare(snapshotGroups: str) -> dict:
     
     answer = {
     

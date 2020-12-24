@@ -213,9 +213,9 @@ def regression_hrv_statistics(nn_intervals_train: List[float], timestamp_list_tr
     #return classify_features_supervised_reg(nn_intervals_train, timestamp_list_train, labels_list_train, nn_intervals, timestamp_list)
     return classify_features_supervised_linreg(nn_intervals_train, timestamp_list_train, labels_list_train, nn_intervals, timestamp_list)
 
-def compare_snapshots (snapshotGroups: str, configAnswer: str, path_named_pipe: str) ->  int:
+def compare_snapshots (snapshotGroups: str, path_named_pipe: str) ->  int:
     
-    answer = compare(snapshotGroups, configAnswer)
+    answer = compare(snapshotGroups)
     
     try:
         # write generated data to the pipe
