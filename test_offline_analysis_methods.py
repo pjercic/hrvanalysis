@@ -280,7 +280,7 @@ def test_regression_model_hrv_statistics(noElements):
 
 def test_compare_snapshots():
     
-    input = '{"grouping":[{"snapshotsID":[101,301,200]},{"snapshotsID":[102,302,202]},{"snapshotsID":[666]}],"answer":{"mean":"true","range":"false","difference":"true"}}';
+    input = '{"grouping":[{"id":0,"snapshotsID":[101,301,200]},{"id":1,"snapshotsID":[102,302,202]},{"id":2,"snapshotsID":[666]}],"answer":{"mean":true,"range":false,"difference":true}}';
     
     try:
         os.mkfifo(path)

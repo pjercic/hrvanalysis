@@ -13,22 +13,24 @@ import json
 
 def compare(snapshotGroups: str) -> dict:
     
-    answer = {
-    
-       'test': 1,
-       'errorCode': 0
-    }
+    answer = {'grouping':[]}
     
     data = json.loads(snapshotGroups);
-    config = json.loads(configAnswer);
     
-    for (k, v) in data.items():
-        answer[k] = v;
+    counter = 0
+    for group in data['grouping']:
+        groupingResults = {'id':group['id']}
+        
+        if data['answer']['mean']:
+            groupingResults['mean'] = 1.23
+    
+        if data['answer']['difference']:
+            groupingResults['difference'] = 'no'
+        
+        answer['grouping'].append({'comparison':groupingResults})
+        counter = counter + 1
     
     import time
     time.sleep(1);
-    
-    if config['mean'].lower() == 'true':
-        answer['mean'] = 1.23
     
     return json.dumps(answer, ensure_ascii=False)
