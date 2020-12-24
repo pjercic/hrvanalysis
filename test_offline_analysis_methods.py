@@ -87,7 +87,64 @@ def test_transform_to_snapshot_statistics_ipc(noElements):
     
     with open(path, 'rt') as p:
         print(p.read())
+
+def test_transform_to_snapshot_statistics_db(isServer = True):
+
+    from sqlalchemy import create_engine
+    from sshtunnel import SSHTunnelForwarder
+
+    remote_postgres = 'jz-pg1.cg18srohk0ph.eu-west-1.rds.amazonaws.com'
+    remote_postgres_port = 5432
+
+    if isServer:
+        conn = create_engine('postgresql+psycopg2://python_dev3:t6CkGDwIbjXjVwyWI4rq@jz-pg1.cg18srohk0ph.eu-west-1.rds.amazonaws.com:5432/stressjam_dev3').connect()
+        #df = pd.read_sql_table('rr_data', conn, schema='gb')
+        df = pd.read_sql_query("SELECT * FROM gb.rr_data WHERE snapshot_id = 866;", conn, parse_dates = ['datum_tijd'])
+        conn.dispose()
+    else:
+        remote_user = 'ec2-user'
+        remote_host = 'ec2-34-246-233-151.eu-west-1.compute.amazonaws.com'
+        remote_port = 22
+        local_host = '127.0.0.1'
+        local_port = 5000
+
+        try:
+            with SSHTunnelForwarder(
+                (remote_host, remote_port),
+                ssh_private_key = "G:/My Drive/Development/jamzone_aws.pem",
+                ssh_username = remote_user, 
+                remote_bind_address=(remote_postgres, remote_postgres_port),
+                local_bind_address=(local_host, local_port)) as server:
+
+                server.start()
+                print ("server connected")
+
+                conn = create_engine('postgresql+psycopg2://python_dev3:t6CkGDwIbjXjVwyWI4rq@localhost:5000/stressjam_dev3')
+                with conn.connect():
+                    print ("database connected")
+                    #df = pd.read_sql_table('rr_data', conn, schema='gb')
+                    df = pd.read_sql_query("SELECT * FROM gb.rr_data WHERE snapshot_id=866;", conn, index_col = 'id')
+                    print(df.head())
+
+                conn.dispose()
+                server.stop()
+        except:
+            print ("Connection Failed")
+        finally:
+            print("Done!")
     
+    #df = df[~dfzoom.index.duplicated(keep='first')]
+    #df3.reset_index().drop_duplicates(subset='index', keep='first').set_index('index')
+
+    # sort based on index old > new
+    df.reindex(index=df.index[::-1])
+
+    #df = df.drop_duplicates(subset='datum_tijd', keep="first")
+
+    time_domain_features = transform_to_snapshot_statistics(df['waarde'], df['datum_tijd'].tolist())
+    
+    print(time_domain_features)
+
 def test_transform_to_3dayme_statistics():
     
     rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(500000)])
