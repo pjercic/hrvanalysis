@@ -97,13 +97,13 @@ def test_transform_to_snapshot_statistics_db(isServer = True):
     remote_postgres_port = 5432
 
     if isServer:
-        conn = create_engine('postgresql+psycopg2://python_dev3:t6CkGDwIbjXjVwyWI4rq@jz-pg1.cg18srohk0ph.eu-west-1.rds.amazonaws.com:5432/stressjam_dev3').connect()
+        conn = create_engine('copyUriFromEvernote').connect()
         #df = pd.read_sql_table('rr_data', conn, schema='gb')
         df = pd.read_sql_query("SELECT * FROM gb.rr_data WHERE snapshot_id = 866;", conn, parse_dates = ['datum_tijd'])
         conn.dispose()
     else:
-        remote_user = 'ec2-user'
-        remote_host = 'ec2-34-246-233-151.eu-west-1.compute.amazonaws.com'
+        remote_user = 'copyUserFromEvernote'
+        remote_host = 'copyUriFromEvernote'
         remote_port = 22
         local_host = '127.0.0.1'
         local_port = 5000
