@@ -52,7 +52,7 @@ def test_transform_to_snapshot_statistics(noElements):
     
     print(time_domain_features)
 
-def test_transform_to_snapshot_statistics_ipc(noElements):
+def test_transform_to_snapshot_statistics_ipc():
     
     input = '{"snapshotID":101,"analysis":"recording","answer":{"mean":true,"range":false,"difference":true}}'
     
