@@ -15,9 +15,12 @@ def compare(snapshotGroups: str) -> dict:
     
     answer = {'grouping':[]}
     
-    data = json.loads(snapshotGroups);
+    try:
+        data = json.loads(snapshotGroups);
+    except:
+        answer['errorCode'] = 402
+        raise SyntaxError('Error parsing snapshot grouping JSON data')      
     
-    counter = 0
     for group in data['grouping']:
         groupingResults = {'id':group['id']}
         
@@ -28,7 +31,8 @@ def compare(snapshotGroups: str) -> dict:
             groupingResults['difference'] = 'no'
         
         answer['grouping'].append({'comparison':groupingResults})
-        counter = counter + 1
+
+    answer['errorCode'] = 0
     
     import time
     time.sleep(1);
