@@ -2,3 +2,6 @@
 *.pngvenv
 .venv
 .git
+!Pipfile*
+.vscode
+__pycache__
