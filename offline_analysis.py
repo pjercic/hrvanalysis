@@ -137,16 +137,24 @@ def transform_to_morning_snapshots_statistics(rr_list: List[float], timestamp_li
     
     nn_timestamps = pd.to_datetime(timestamp_list)
     
-    # snapshot for two minutes
-    if nn_timestamps[-1] - nn_timestamps[0] < pd.to_timedelta('2 minutes'):
+    # snapshot has to be minimum for three minutes
+    if nn_timestamps[-1] - nn_timestamps[0] < pd.to_timedelta('3 minutes'):
         return json.dumps(json.loads('{"errorCode":202}'), ensure_ascii=False)
     
-    # first 15 seconds of data are discarded as preparation time
-    trimmed_data = nn_timestamps[nn_timestamps > nn_timestamps[0] + pd.to_timedelta('15 seconds')]
+    time_domain_features = transform_to_hrv_statistics(rr_list, timestamp_list, '60s')
+
+    # first 60 seconds of data are discarded as preparation time
+    trimmed_data = nn_timestamps[nn_timestamps > nn_timestamps[0] + pd.to_timedelta('60 seconds')]
+
+    trimmed_time_domain_features = transform_to_hrv_statistics(rr_list[len(rr_list) - trimmed_data.size:], trimmed_data, '60s')
     
-    time_domain_features = transform_to_hrv_statistics(rr_list[len(rr_list) - trimmed_data.size:], trimmed_data, '60s')
-    
-    return time_domain_features
+    hrv_domain_features = json.loads(time_domain_features)
+    trimmed_hrv_domain_features = json.loads(trimmed_time_domain_features)
+
+    trimmed_hrv_domain_features['rmssdArray'] = hrv_domain_features['rmssdArray']
+    trimmed_hrv_domain_features['hrArray'] = hrv_domain_features['hrArray']
+
+    return json.dumps(trimmed_hrv_domain_features, ensure_ascii=False)
     
 def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str], window_duration: str) -> dict:
     
