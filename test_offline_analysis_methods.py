@@ -17,6 +17,10 @@ TEST_DATA_FILENAME_60 = os.path.join(os.path.dirname(__file__), './tests/test_nn
 TEST_DATA_FILENAME_LARGE = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_large.txt')
 TEST_DATA_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200729_test_nn_intervals.txt')
 TEST_TIMESTAMPS_FILENAME_BUG = os.path.join(os.path.dirname(__file__), './tests/bug20200729_test_timestamps.txt')
+TEST_DATA_FILENAME_GOODFLOW = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_goodflow.txt')
+TEST_TIMESTAMPS_FILENAME_GOODFLOW = os.path.join(os.path.dirname(__file__), './tests/test_nn_timestamp_goodflow.txt')
+TEST_DATA_FILENAME_BADFLOW = os.path.join(os.path.dirname(__file__), './tests/test_nn_intervals_badflow.txt')
+TEST_TIMESTAMPS_FILENAME_BADFLOW = os.path.join(os.path.dirname(__file__), './tests/test_nn_timestamp_badflow.txt')
 
 path = "./mypipe"
 
@@ -38,10 +42,8 @@ def test_transform_to_snapshot_statistics(noElements):
     
     # rr_intervals_list contains integer values of RR-interval
     if noElements <= 1000:
-        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BUG))
-        rr_test_intervals = rr_test_intervals[:noElements]
-        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BUG)
-        rr_test_timestamps = rr_test_timestamps[:noElements]
+        rr_test_intervals = np.array(load_test_data(TEST_DATA_FILENAME_BADFLOW))
+        rr_test_timestamps = load_test_timestamps(TEST_TIMESTAMPS_FILENAME_BADFLOW)
     else:
         rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(noElements)])
         rr_test_intervals = rr_test_intervals.astype(int)
