@@ -86,6 +86,7 @@ Explanation of the mobile app values returning from the library
 - HR standard deviation: 'hrStd': std_hr,
 - Error code: 'errorCode': error_code
 - LF/HF ratio: 'lfHfRatio'
+- Regression line angle [Rad]: 'linregSlope': 'linregSlope'
 - Version number: 'version'
 
 _Code for testing the snapshot functionality on the server > python3 -c 'from test_offline_analysis_methods import *; test_transform_to_snapshot_statistics(2000)'_

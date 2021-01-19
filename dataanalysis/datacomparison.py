@@ -47,36 +47,21 @@ def linear_regression(nn_intervals: List[float], timestamp_list: List[str]) -> d
 
     answer = {}
 
-    #data = pd.read_csv('data.csv')  # load data set
-    #X = data.iloc[:, 0].values.reshape(-1, 1)  # values converts it into a numpy array
-    #Y = data.iloc[:, 1].values.reshape(-1, 1)  # -1 means that calculate the dimension of rows, but have 1 column
-
-    # You should call .reshape() on x because this array is required to be two-dimensional, or to be more precise, to have one column and as many rows as necessary.
-    #x = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
-    #y = np.array([5, 20, 14, 32, 22, 38])
-
+    # X will have to be a column vector later for the analysis
     X = np.array(nn_intervals)
+    
+    # Extract milliseconds from timestamps as X axis
     Y = np.array(pd.to_datetime(timestamp_list).astype(np.int64) // 10**6, dtype=float)
+    # Convert to seconds as a SI unit
     Y = (Y - Y[0]) / 1000
 
     linear_regressor = linear_model.LinearRegression()  # create object for the class
     linear_regressor.fit(X[:, np.newaxis], Y)  # perform linear regression
 
-    #Y_pred = linear_regressor.predict(X)  # make predictions
-
-    scores = linear_regressor.score(X, Y) # R2 score
-    
-    # b0 the intercept
-    linear_regressor.intercept_
-
-    # b1 the slope
-    linear_regressor.coef_
-
-    print(scores)
-    print('Best accuracy of linear regression on test set: {:.2f}'.format(scores))
-
     import math 
-    answer['linregSlope'] = math.tan(linear_regressor.coef_/1) # unit of time
+    answer['linregSlope'] = math.atan(linear_regressor.coef_/1) # unit of time
+
+    return json.dumps(answer, ensure_ascii=False)
 
     ## ---
 
