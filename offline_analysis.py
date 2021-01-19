@@ -7,7 +7,7 @@ Created on Dec 5, 2019
 from typing import List
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values, get_jamzone_time_domain_features, get_jamzone_frequency_domain_features
 from machinelearning import classify_features_supervised_knn, classify_features_supervised_reg, classify_features_supervised_linreg
-from dataanalysis import compare
+from dataanalysis import compare, linear_regression
 import json
 import pandas as pd
 import os
@@ -192,12 +192,16 @@ def transform_to_hrv_statistics(rr_list: List[float], timestamp_list: List[str],
     # Get time-domain and frequency domain features from our signal
     time_domain_features = get_jamzone_time_domain_features(interpolated_nn_intervals, timestamp_list, window_duration)
     freq_domain_features = get_jamzone_frequency_domain_features(interpolated_nn_intervals)
+    stat_features = linear_regression(interpolated_nn_intervals, timestamp_list)
     
     hrv_domain_features = json.loads(time_domain_features)
     freq_domain_features = json.loads(freq_domain_features)
+    stat_features = json.loads(stat_features)
+
     if error_code != 0:
         hrv_domain_features['errorCode'] = error_code
     hrv_domain_features['lfHfRatio'] = freq_domain_features['lf_hf_ratio']
+    hrv_domain_features['linregSlope'] = stat_features['linregSlope']
     hrv_domain_features['balanceGroup'] = freq_domain_features['balance_group']
     hrv_domain_features['balanceScore'] = freq_domain_features['balance_score']
     hrv_domain_features['vitalityScore'] = 0.833 * hrv_domain_features['balanceScore'] + 0.167 * hrv_domain_features['restScore'] + 0.0000000000000001457

@@ -9,6 +9,10 @@ Created on Dec 17, 2020
 """This script provides several statistical methods to compare data between each other
  for heart rate variability analysis."""
 
+from typing import List
+from sklearn import linear_model
+import numpy as np
+import pandas as pd
 import json
 
 def compare(snapshotGroups: str) -> dict:
@@ -38,3 +42,89 @@ def compare(snapshotGroups: str) -> dict:
     time.sleep(1);
     
     return json.dumps(answer, ensure_ascii=False)
+
+def linear_regression(nn_intervals: List[float], timestamp_list: List[str]) -> dict:
+
+    answer = {}
+
+    #data = pd.read_csv('data.csv')  # load data set
+    #X = data.iloc[:, 0].values.reshape(-1, 1)  # values converts it into a numpy array
+    #Y = data.iloc[:, 1].values.reshape(-1, 1)  # -1 means that calculate the dimension of rows, but have 1 column
+
+    # You should call .reshape() on x because this array is required to be two-dimensional, or to be more precise, to have one column and as many rows as necessary.
+    #x = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+    #y = np.array([5, 20, 14, 32, 22, 38])
+
+    X = np.array(nn_intervals)
+    Y = np.array(pd.to_datetime(timestamp_list).astype(np.int64) // 10**6, dtype=float)
+    Y = (Y - Y[0]) / 1000
+
+    linear_regressor = linear_model.LinearRegression()  # create object for the class
+    linear_regressor.fit(X[:, np.newaxis], Y)  # perform linear regression
+
+    #Y_pred = linear_regressor.predict(X)  # make predictions
+
+    scores = linear_regressor.score(X, Y) # R2 score
+    
+    # b0 the intercept
+    linear_regressor.intercept_
+
+    # b1 the slope
+    linear_regressor.coef_
+
+    print(scores)
+    print('Best accuracy of linear regression on test set: {:.2f}'.format(scores))
+
+    import math 
+    answer['linregSlope'] = math.tan(linear_regressor.coef_/1) # unit of time
+
+    ## ---
+
+    ### Without a constant
+
+    #import statsmodels.api as sm
+
+    ## x has columns
+    #X = df["RM"]
+
+    ## y has rows
+    #y = target["MEDV"]
+
+    ## Note the difference in argument order
+    #model = sm.OLS(y, X)
+    #results = model.fit()
+
+
+    #results.adjustedrsquared
+
+    ## array with b0, b1, and b2 respectively
+    #results.params
+
+    #predictions = model.predict(X) # make the predictions by the model
+
+    ## Print out the statistics
+    #model.summary()
+
+
+    ### With a constant
+
+    #import statsmodels.api as sm # import statsmodels 
+
+    #X = df["RM"] ## X usually means our input variables (or independent variables)
+    #y = target["MEDV"] ## Y usually means our output/dependent variable
+    #X = sm.add_constant(X) ## let's add an intercept (beta_0) to our model
+
+    ## Note the difference in argument order
+    #model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
+    #predictions = model.predict(X)
+
+    ## Print out the statistics
+    #model.summary()
+
+    ## ---
+
+    #import scipy.stats as sp
+
+    #y=np.array(df['OW2 As(mg/L)'].dropna().values, dtype=float)
+    #x=np.array(pd.to_datetime(df['OW2 As(mg/L)'].dropna()).index.values, dtype=float)
+    #slope, intercept, r_value, p_value, std_err =sp.linregress(x,y)

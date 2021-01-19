@@ -5,4 +5,4 @@
 
 __version__ = "1.0.0"
 
-from dataanalysis.datacomparison import (compare)
+from dataanalysis.datacomparison import (compare, linear_regression)
