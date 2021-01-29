@@ -140,9 +140,9 @@ def test_transform_to_3dayme_statistics():
 
 def test_transform_to_morning_snapshots_statistics():
     
-    rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(250)])
+    rr_test_intervals = np.array([random.normalvariate(600, 60) for _ in range(350)])
     rr_test_intervals = rr_test_intervals.astype(int)
-    rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=250, freq = '600ms')
+    rr_test_timestamps = pd.date_range(start=pd.datetime.now(), periods=350, freq = '600ms')
     rr_test_timestamps = rr_test_timestamps.strftime("%Y-%m-%d %H:%M:%S.%f")
 
     time_domain_features = transform_to_morning_snapshots_statistics(rr_test_intervals, rr_test_timestamps)
